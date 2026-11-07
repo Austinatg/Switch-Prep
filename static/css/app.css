@@ -254,11 +254,3 @@
 .lesson-note-list .note-point-body small{font-size:9px}
 .lesson-notes-empty{margin:0;padding:14px;border:1px dashed #34465e;border-radius:9px;color:#91a0b8;font-size:10px;line-height:1.6}
 .lesson-notes-link{display:inline-block;margin-top:14px;font-size:10px}
-.user-mini form{margin-left:auto}
-.logout-button{display:flex;align-items:center;gap:6px;padding:7px 9px;border:1px solid #ffffff20;border-radius:8px;background:#ffffff08;color:#b8c5d8;font:inherit;font-size:11px;cursor:pointer;white-space:nowrap}
-.logout-button:hover{border-color:#ff8b8b80;background:#ff6b6b12;color:#ffaaaa}
-.sidebar{overflow-y:auto;overscroll-behavior:contain}
-.profile-logout{max-width:550px;margin-top:18px;padding:20px;border:1px solid var(--line);border-radius:14px;background:#101a2b}
-.profile-logout h2{margin:0 0 6px;font-size:16px}
-.profile-logout p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
-.profile-logout form{margin-top:14px}
