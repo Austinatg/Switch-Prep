@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from .models import Specialization, Module, Section, Topic, TopicProgress
 from apps.notes.models import DailyNote, NotePoint
 from django.utils import timezone
+from datetime import timedelta
 
 class CurriculumTests(TestCase):
     def setUp(self):
@@ -27,7 +28,12 @@ class CurriculumTests(TestCase):
     def test_lesson_shows_today_notes_instead_of_checklist(self):
         self.client.force_login(self.user)
         note = DailyNote.objects.create(user=self.user, learning_date=timezone.localdate())
-        NotePoint.objects.create(daily_note=note, content="Review partition pruning.")
+        older = NotePoint.objects.create(daily_note=note, content="Earlier lesson point.")
+        newer = NotePoint.objects.create(daily_note=note, content="Review partition pruning.")
+        NotePoint.objects.filter(pk=older.pk).update(
+            created_at=timezone.now() - timedelta(hours=1),
+        )
+        NotePoint.objects.filter(pk=newer.pk).update(created_at=timezone.now())
         response = self.client.get(reverse(
             "curriculum:topic_detail",
             args=[self.spec.slug, self.topic.slug],
@@ -35,3 +41,7 @@ class CurriculumTests(TestCase):
         self.assertContains(response, "Review partition pruning.")
         self.assertContains(response, "ATTACHED NOTES")
         self.assertNotContains(response, "LESSON CHECKLIST")
+        self.assertLess(
+            response.content.index(b"Review partition pruning."),
+            response.content.index(b"Earlier lesson point."),
+        )

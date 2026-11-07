@@ -220,7 +220,10 @@ def topic_detail(request, specialization_slug, topic_slug):
         learning_date=timezone.localdate(),
         title=""
     ).first()
-    note_points = daily_note.points.all() if daily_note else []
+    note_points = (
+        daily_note.points.order_by("-created_at", "-pk")
+        if daily_note else []
+    )
 
     return render(request, "curriculum/topic_detail.html", {
         "topic": topic,

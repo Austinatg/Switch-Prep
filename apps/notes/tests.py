@@ -1,7 +1,8 @@
-from datetime import date
+from datetime import date, timedelta
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
 from .models import DailyNote, NotePoint
 
 class NotesTests(TestCase):
@@ -48,3 +49,40 @@ class NotesTests(TestCase):
         NotePoint.objects.create(daily_note=note, content="Kafka consumer groups")
         response = self.client.get(reverse("notes:home"), {"q":"Kafka"})
         self.assertContains(response, "Kafka consumer groups")
+    def test_notes_are_newest_first_by_default_and_can_be_sorted_oldest_first(self):
+        self.client.force_login(self.user)
+        note = DailyNote.objects.create(user=self.user, learning_date=timezone.localdate())
+        older = NotePoint.objects.create(daily_note=note, content="Older point")
+        newer = NotePoint.objects.create(daily_note=note, content="Newer point")
+        NotePoint.objects.filter(pk=older.pk).update(
+            created_at=timezone.now() - timedelta(hours=1),
+        )
+        NotePoint.objects.filter(pk=newer.pk).update(
+            created_at=timezone.now(),
+        )
+
+        newest_response = self.client.get(reverse("notes:home"))
+        self.assertLess(
+            newest_response.content.index(b"Newer point"),
+            newest_response.content.index(b"Older point"),
+        )
+        oldest_response = self.client.get(reverse("notes:home"), {"sort": "oldest"})
+        self.assertLess(
+            oldest_response.content.index(b"Older point"),
+            oldest_response.content.index(b"Newer point"),
+        )
+    def test_importance_sort_places_red_yellow_then_no_highlight(self):
+        self.client.force_login(self.user)
+        note = DailyNote.objects.create(user=self.user, learning_date=timezone.localdate())
+        NotePoint.objects.create(daily_note=note, content="No highlight", importance="normal")
+        NotePoint.objects.create(daily_note=note, content="Yellow point", importance="yellow")
+        NotePoint.objects.create(daily_note=note, content="Red point", importance="red")
+
+        response = self.client.get(reverse("notes:home"), {"sort": "importance"})
+        ordered_contents = list(
+            response.context["points"].values_list("content", flat=True)
+        )
+        self.assertEqual(
+            ordered_contents,
+            ["Red point", "Yellow point", "No highlight"],
+        )

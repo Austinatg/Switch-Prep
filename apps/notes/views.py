@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Case, IntegerField, Q, When
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -28,9 +28,25 @@ def notes_home(request):
     points = daily_note.points.all()
     if query:
         points = points.filter(content__icontains=query)
+    sort_by = request.GET.get("sort", "newest")
+    if sort_by == "oldest":
+        points = points.order_by("created_at", "pk")
+    elif sort_by == "importance":
+        importance_order = Case(
+            When(importance=NotePoint.Importance.RED, then=0),
+            When(importance=NotePoint.Importance.YELLOW, then=1),
+            When(importance=NotePoint.Importance.NORMAL, then=2),
+            When(importance=NotePoint.Importance.HIGHLIGHT, then=3),
+            output_field=IntegerField(),
+        )
+        points = points.order_by(importance_order, "-created_at", "-pk")
+    else:
+        sort_by = "newest"
+        points = points.order_by("-created_at", "-pk")
     archive = DailyNote.objects.filter(user=request.user).exclude(learning_date=day).order_by("-learning_date")[:10]
     return render(request, "notes/notes_home.html", {
         "daily_note": daily_note, "points": points, "query": query,
+        "sort_by": sort_by,
         "selected_date": day.isoformat(), "today": today.isoformat(),
         "archive": archive, "active_page": "notes",
     })

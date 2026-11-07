@@ -4,14 +4,27 @@
 {% block content %}
 <section class="page-intro"><div class="eyebrow">YOUR PERSONAL KNOWLEDGE BASE</div><h1>Daily learning notes</h1><p>Capture one idea per card. Mark important points and revisit them whenever you need.</p></section>
 <div class="notes-toolbar">
- <form method="get" class="notes-search"><input type="search" name="q" value="{{ query }}" placeholder="Search your note points..."><input type="hidden" name="date" value="{{ selected_date }}"><button class="button button-ghost" type="submit">Search</button>{% if query %}<a href="{% url 'notes:home' %}?date={{ selected_date }}">Clear</a>{% endif %}</form>
+ <form method="get" class="notes-search"><input type="search" name="q" value="{{ query }}" placeholder="Search your note points..."><input type="hidden" name="date" value="{{ selected_date }}"><input type="hidden" name="sort" value="{{ sort_by }}"><button class="button button-ghost" type="submit">Search</button>{% if query %}<a href="{% url 'notes:home' %}?date={{ selected_date }}&amp;sort={{ sort_by }}">Clear</a>{% endif %}</form>
  <a class="button button-ghost" href="{% url 'notes:calendar' %}">▦ Open calendar</a>
 </div>
 <div class="notes-layout">
  <section class="notes-main">
-  <div class="notes-date-heading"><div><div class="eyebrow">SELECTED DAY</div><h2>{{ daily_note.learning_date|date:"l, d F Y" }}</h2></div><form method="get"><input type="date" name="date" value="{{ selected_date }}"><button class="button button-ghost" type="submit">Go</button></form></div>
+  <div class="notes-date-heading"><div><div class="eyebrow">SELECTED DAY</div><h2>{{ daily_note.learning_date|date:"l, d F Y" }}</h2></div><form method="get"><input type="date" name="date" value="{{ selected_date }}"><input type="hidden" name="q" value="{{ query }}"><input type="hidden" name="sort" value="{{ sort_by }}"><button class="button button-ghost" type="submit">Go</button></form></div>
   <form method="post" action="{% url 'notes:add' %}" class="panel add-note-form">{% csrf_token %}<input type="hidden" name="learning_date" value="{{ selected_date }}"><label for="note-content">Add a new point</label><textarea id="note-content" name="content" rows="3" required placeholder="Write one concept, definition, command or learning insight..."></textarea><div class="add-note-footer"><select name="importance" aria-label="Importance"><option value="normal">No highlight</option><option value="red">Red — important</option><option value="yellow">Yellow — review</option><option value="highlight">Highlight</option></select><button class="button" type="submit">＋ Add point</button></div></form>
-  <div class="notes-count-row"><b>{% if query %}Search results{% else %}Your points{% endif %}</b><span>{{ points|length }} point{{ points|length|pluralize }}</span></div>
+  <div class="notes-list-toolbar">
+   <div class="notes-count-row"><b>{% if query %}Search results{% else %}Your points{% endif %}</b><span>{{ points|length }} point{{ points|length|pluralize }}</span></div>
+   <form method="get" class="notes-sort-form">
+    <input type="hidden" name="date" value="{{ selected_date }}">
+    <input type="hidden" name="q" value="{{ query }}">
+    <label for="notes-sort">Sort by</label>
+    <select id="notes-sort" name="sort">
+     <option value="newest" {% if sort_by == "newest" %}selected{% endif %}>Newest first</option>
+     <option value="oldest" {% if sort_by == "oldest" %}selected{% endif %}>Oldest first</option>
+     <option value="importance" {% if sort_by == "importance" %}selected{% endif %}>Importance: red, yellow, no highlight</option>
+    </select>
+    <button class="button button-ghost" type="submit">Apply</button>
+   </form>
+  </div>
   <div class="note-point-list">
    {% for point in points %}
    <article class="note-point-card importance-{{ point.importance }}"><div class="note-point-marker"></div><div class="note-point-body"><p>{{ point.content|linebreaksbr }}</p><small>Added {{ point.created_at|date:"H:i" }} · {{ point.get_importance_display }}</small></div><div class="note-point-actions"><a href="{% url 'notes:edit' point.id %}" title="Edit">✎</a><form method="post" action="{% url 'notes:delete' point.id %}" onsubmit="return confirm('Delete this note point?');">{% csrf_token %}<button type="submit" title="Delete">×</button></form></div></article>
