@@ -8,7 +8,12 @@ from django.db import transaction
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from .forms import RegisterForm, VerifyEmailForm
-from .models import User, UserProfile, EmailVerification
+from .models import (
+    User,
+    UserProfile,
+    EmailVerification,
+    VerificationRateLimitError,
+)
 
 def register(request):
     if request.user.is_authenticated: return redirect("dashboard")
@@ -56,7 +61,11 @@ def resend_verification(request):
     verification = EmailVerification.objects.filter(user=user).first()
     if verification and timezone.now()-verification.last_sent_at < timedelta(seconds=settings.EMAIL_VERIFICATION_RESEND_SECONDS):
         messages.warning(request,"Please wait before requesting another code."); return redirect("accounts:verify_email")
-    verification,code = EmailVerification.issue_for(user)
+    try:
+        verification,code = EmailVerification.issue_for(user)
+    except VerificationRateLimitError:
+        messages.warning(request,"Too many verification requests. Please try again later.")
+        return redirect("accounts:verify_email")
     send_mail("Your new DataForge verification code",f"Your new verification code is {code}.",settings.DEFAULT_FROM_EMAIL,[user.email],fail_silently=False)
     messages.success(request,"A new verification code has been sent."); return redirect("accounts:verify_email")
 
