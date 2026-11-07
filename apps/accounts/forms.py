@@ -12,7 +12,9 @@ class RegisterForm(forms.Form):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"autocomplete":"new-password","placeholder":"At least 10 characters"}))
     password2 = forms.CharField(label="Confirm password", widget=forms.PasswordInput(attrs={"autocomplete":"new-password","placeholder":"Enter password again"}))
     def clean_email(self):
-        return self.cleaned_data["email"].strip().lower()
+        email = self.cleaned_data["email"].strip().lower()
+        if User.objects.filter(email__iexact=email).exists(): raise ValidationError("An account with this email already exists.")
+        return email
     def clean(self):
         cleaned = super().clean()
         if cleaned.get("password1") and cleaned.get("password2") and cleaned["password1"] != cleaned["password2"]:

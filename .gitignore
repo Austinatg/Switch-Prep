@@ -1,6 +1,4 @@
 .env
-.env.*
-!.env.example
 .venv/
 venv/
 __pycache__/
@@ -8,9 +6,3 @@ __pycache__/
 db.sqlite3
 staticfiles/
 media/
-credentials.json
-client_secret*.json
-*_credentials.json
-token.json
-oauth*.json
-.oauth/
