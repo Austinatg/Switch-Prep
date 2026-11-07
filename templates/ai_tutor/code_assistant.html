@@ -1,0 +1,30 @@
+{% extends "ai_tutor/base_ai.html" %}
+{% block ai_title %}Code Assistant — DataForge{% endblock %}
+{% block breadcrumb %}Code Assistant{% endblock %}
+{% block ai_heading %}Code Assistant{% endblock %}
+{% block ai_intro %}Understand and improve SQL, Python, PySpark and Java. Your code is analyzed as text and is never executed.{% endblock %}
+{% block ai_content %}
+<div class="ai-workspace-grid">
+  <section class="ai-panel ai-form-panel">
+    <form method="post" data-ai-loading-form>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="ai-form-errors">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="ai-form-row">
+        <div class="ai-form-field"><label for="{{ form.language.id_for_label }}">Language</label>{{ form.language }}{{ form.language.errors }}</div>
+        <div class="ai-form-field"><label for="{{ form.task.id_for_label }}">What do you need?</label>{{ form.task }}{{ form.task.errors }}</div>
+      </div>
+      <div class="ai-form-field ai-code-field"><label for="{{ form.code.id_for_label }}">Code <span>Optional for concept or example requests</span></label>{{ form.code }}{{ form.code.errors }}</div>
+      <div class="ai-code-actions"><button class="ai-copy-button" type="button" data-ai-clear>Clear form</button></div>
+      <div class="ai-form-field"><label for="{{ form.instructions.id_for_label }}">Instructions or error details</label>{{ form.instructions }}{{ form.instructions.errors }}</div>
+      <div class="ai-form-footer"><span>Code is not run, compiled or sent to a shell.</span><button class="ai-button" type="submit">Analyze code <i>→</i></button></div>
+    </form>
+  </section>
+  <section class="ai-panel ai-answer-panel">
+    <div class="ai-panel-heading"><div><div class="eyebrow">ASSISTANT</div><h2>Review and explanation</h2></div>
+      {% if answer %}<button class="ai-copy-button" type="button" data-copy-answer>Copy response</button>{% endif %}
+    </div>
+    {% if answer %}<div class="ai-answer-content" data-answer-content>{{ answer|linebreaks }}</div>
+    {% else %}<div class="ai-empty-state"><span>⌘</span><h3>Your review will appear here</h3><p>Choose a task, add code or instructions, and run an analysis.</p></div>{% endif %}
+  </section>
+</div>
+{% endblock %}

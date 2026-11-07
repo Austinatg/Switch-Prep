@@ -47,5 +47,6 @@ urlpatterns = [
     path("community/", include("apps.community.urls")),
     path("shared-learning/", include("apps.collaboration.urls")),
     path("messages/", include("apps.messaging.urls")),
+    path("ai/", include("apps.ai_tutor.urls")),
     path("tutor/", include("apps.collaboration.tutor_urls")),
 ]

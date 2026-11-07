@@ -1,0 +1,24 @@
+{% extends "ai_tutor/base_ai.html" %}
+{% block ai_title %}Personalized Learning — DataForge{% endblock %}
+{% block breadcrumb %}Personalized Learning{% endblock %}
+{% block ai_heading %}Your next learning steps{% endblock %}
+{% block ai_intro %}Recommendations use published lessons, your recorded lesson progress and recent lab attempts when available.{% endblock %}
+{% block ai_content %}
+<div class="ai-workspace-grid ai-learning-grid">
+  <section class="ai-panel ai-form-panel">
+    <div class="ai-panel-heading"><div><div class="eyebrow">PLAN YOUR PROGRESS</div><h2>Build a focused plan</h2></div><span class="ai-feature-icon">↗</span></div>
+    <p class="ai-muted">Your learner account is not shared with Gemini. Recommendations are grounded in the progress and curriculum summaries shown below.</p>
+    <form method="post" data-ai-loading-form>
+      {% csrf_token %}
+      <div class="ai-form-field"><label for="{{ form.interests.id_for_label }}">What are you interested in?</label>{{ form.interests }}{{ form.interests.errors }}</div>
+      <div class="ai-data-note">{% if has_progress %}Saved lesson progress is available and will inform your plan.{% else %}No completed lesson records were found. Recommendations will be labeled as general.{% endif %}</div>
+      <div class="ai-form-footer"><span>Recommendations may need review</span><button class="ai-button" type="submit">Recommend next steps <i>→</i></button></div>
+    </form>
+  </section>
+  <section class="ai-panel ai-answer-panel">
+    <div class="ai-panel-heading"><div><div class="eyebrow">YOUR PLAN</div><h2>Recommended sequence</h2></div></div>
+    {% if answer %}<div class="ai-answer-content">{{ answer|linebreaks }}</div>
+    {% else %}<div class="ai-empty-state"><span>↗</span><h3>A plan that meets you where you are</h3><p>Generate recommendations for lessons to study, concepts to revisit and relevant practice labs.</p></div>{% endif %}
+  </section>
+</div>
+{% endblock %}

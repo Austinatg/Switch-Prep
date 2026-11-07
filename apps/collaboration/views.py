@@ -52,7 +52,7 @@ def compile_notebook(request,notebook_id):
     if not source.strip():
         messages.error(request,'Add some notes before compiling them.')
     else:
-        result,error=ask_tutor('Compile these collaborative notes into a clear, structured study guide. Preserve technical details, group related concepts, highlight contradictions or missing information, and do not invent facts.\n\n'+source)
+        result,error=ask_tutor(request.user, 'Compile these collaborative notes into a clear, structured study guide. Preserve technical details, group related concepts, highlight contradictions or missing information, and do not invent facts.\n\n'+source)
         if error: messages.error(request,error)
         else: SharedNote.objects.create(notebook=notebook,author=request.user,title='AI compiled study guide',content=result);notebook.save(update_fields=['updated_at']);messages.success(request,'AI study guide added to this notebook.')
     return redirect('collaboration:detail',notebook_id=notebook.pk)

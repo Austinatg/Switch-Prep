@@ -1,0 +1,53 @@
+{% extends "ai_tutor/base_ai.html" %}
+{% block ai_title %}AI Tutor — DataForge{% endblock %}
+{% block breadcrumb %}AI Tutor{% endblock %}
+{% block ai_heading %}{% if conversation.lesson_title %}Lesson assistant{% else %}Data Engineering Tutor{% endif %}{% endblock %}
+{% block ai_intro %}{% if conversation.lesson_title %}Ask about {{ conversation.lesson_title }}. Lesson context is included securely from the published lesson.{% else %}Ask about SQL, Python, Spark, pipelines, data platforms and architecture.{% endif %}{% endblock %}
+{% block ai_content %}
+<div class="ai-tutor-layout">
+  <aside class="ai-panel ai-conversation-sidebar">
+    <a class="ai-button ai-button-secondary" href="{% url 'ai_tutor:tutor' %}">＋ New conversation</a>
+    <div class="ai-sidebar-label">RECENT CONVERSATIONS</div>
+    {% for item in conversations %}
+      <div class="ai-conversation-row {% if conversation.id == item.id %}is-active{% endif %}">
+        <a href="{% url 'ai_tutor:conversation' item.id %}">{{ item.title|default:item.lesson_title|default:"New conversation"|truncatechars:34 }}</a>
+        <form method="post" action="{% url 'ai_tutor:delete_conversation' item.id %}" data-confirm="Delete this conversation?">
+          {% csrf_token %}<button type="submit" aria-label="Delete conversation" title="Delete">×</button>
+        </form>
+      </div>
+    {% empty %}<p class="ai-muted">No conversations yet.</p>{% endfor %}
+  </aside>
+  <section class="ai-panel ai-chat-panel">
+    {% if conversation.lesson_title %}<div class="ai-context-pill">LESSON CONTEXT · {{ conversation.lesson_title }}</div>{% endif %}
+    <div class="ai-chat-messages" data-chat-messages aria-live="polite">
+      {% if conversation %}
+        {% for message in chat_messages %}
+          <article class="ai-chat-message role-{{ message.role }}">
+            <span class="ai-message-avatar">{% if message.role == "assistant" %}✦{% else %}{{ request.user.first_name|default:"Y"|slice:":1"|upper }}{% endif %}</span>
+            <div><small>{% if message.role == "assistant" %}DATAFORGE AI{% else %}YOU{% endif %}</small><div class="ai-message-content">{{ message.content|linebreaksbr }}</div></div>
+          </article>
+        {% empty %}<div class="ai-chat-empty"><span>✦</span><h2>What would you like to understand?</h2><p>Ask a focused question and include any relevant details.</p></div>{% endfor %}
+      {% else %}
+        <div class="ai-chat-empty"><span>✦</span><h2>What would you like to understand?</h2><p>Ask a focused question and include any relevant details.</p></div>
+      {% endif %}
+    </div>
+    {% if conversation %}
+      <form class="ai-chat-form" method="post" action="{% url 'ai_tutor:send_message' conversation.id %}" data-ai-loading-form>
+        {% csrf_token %}
+        <label class="ai-level-select" for="{{ form.level.id_for_label }}">Explain at</label>{{ form.level }}
+        {{ form.question }}
+        {% for error in form.question.errors %}<small class="ai-field-error">{{ error }}</small>{% endfor %}
+        <div class="ai-form-footer"><span>Up to 4,000 characters · Responses may need verification</span><button class="ai-button" type="submit">Send question <i>→</i></button></div>
+      </form>
+    {% else %}
+      <form class="ai-chat-form" method="post" action="{% url 'ai_tutor:new_conversation' %}" data-ai-loading-form>
+        {% csrf_token %}
+        <label class="ai-level-select" for="{{ form.level.id_for_label }}">Explain at</label>{{ form.level }}
+        {{ form.question }}
+        {% for error in form.question.errors %}<small class="ai-field-error">{{ error }}</small>{% endfor %}
+        <div class="ai-form-footer"><span>Up to 4,000 characters · Responses may need verification</span><button class="ai-button" type="submit">Send question <i>→</i></button></div>
+      </form>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

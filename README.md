@@ -45,17 +45,53 @@ Visit `/admin/` and sign in as a staff user.
 - **Shared notebooks:** users create notebooks in the app; owners can invite existing accounts by email.
 - **Labs, projects, certifications and curriculum:** continue managing the content using their existing admin sections.
 
-## Optional AI features
+## Gemini AI learning tools
 
-The platform runs without an AI provider. To enable tutor answers and AI compilation of shared notes, configure an OpenAI-compatible Chat Completions endpoint in `.env`:
+The AI Tutor, lesson assistant, Code Assistant, personalized learning planner,
+interview simulator and shared-notebook study-guide compilation use Google's
+`google-genai` SDK. The application does not use OpenAI, paid fallbacks, or
+automatic billing upgrades. AI tools remain unavailable until `GEMINI_API_KEY`
+is configured in the server environment; never put the key in templates,
+JavaScript, source control or logs.
+
+Configure these values in `.env` for local development or the host's environment
+settings:
 
 ```env
-AI_API_KEY=your-provider-key
-AI_API_BASE_URL=https://api.openai.com/v1
-AI_MODEL=gpt-4o-mini
+GEMINI_API_KEY=your-google-ai-studio-key
+GEMINI_MODEL=gemini-2.5-flash
+DATAFORGE_AI_DAILY_LIMIT=10
+DATAFORGE_AI_GLOBAL_DAILY_LIMIT=100
+DATAFORGE_AI_MAX_INPUT_CHARS=4000
+DATAFORGE_AI_MAX_OUTPUT_TOKENS=800
+DATAFORGE_AI_TIMEOUT_MS=30000
 ```
 
-Use a provider/model available to your account. API usage may incur charges; the application itself does not charge learners. Never commit the key.
+The model name is configurable and its default may need changing as Google's
+model availability evolves. Check the current Gemini API and free-tier
+availability for your account before deployment. The application caps requests
+but cannot guarantee Google's quota or free-tier availability; actual limits
+vary by model and account. When a provider quota or application limit is reached,
+the request stops with a friendly message. No paid fallback is attempted.
+Code submissions are analyzed as text and are never executed by the server.
+
+### PythonAnywhere connectivity
+
+Do not assume local connectivity proves PythonAnywhere connectivity. Some
+PythonAnywhere free accounts restrict outbound internet access, and Gemini API
+requests may require Google API domains to be allowlisted. From a PythonAnywhere
+Bash console, test basic access without sending an API key:
+
+```bash
+python -c "import socket; socket.create_connection(('generativelanguage.googleapis.com', 443), timeout=10); print('Gemini API host is reachable')"
+```
+
+Successful connection confirms DNS and TCP reachability; a DNS, timeout or
+connection error indicates an egress/allowlist issue. Request
+allowlisting from PythonAnywhere support if required, then test the AI feature
+from the deployed web app. This project does not add a direct Supabase/PostgreSQL
+dependency; verify database connectivity separately before choosing a hosted
+database.
 
 ## Email verification and password recovery
 
@@ -66,7 +102,7 @@ For local development, `EMAIL_BACKEND=django.core.mail.backends.console.EmailBac
 1. Create a managed PostgreSQL database and a Render web service.
 2. Set `DATABASE_URL` to the database's **internal** connection URL where supported.
 3. Set `SECRET_KEY` to a newly generated secret, `DEBUG=False`, `ALLOWED_HOSTS` to your Render hostname and `CSRF_TRUSTED_ORIGINS` to `https://your-service.onrender.com`.
-4. Configure production SMTP and optional AI environment variables.
+4. Configure production SMTP and optional Gemini environment variables.
 5. Use the included `render.yaml` build/start commands; ensure migrations run before serving traffic.
 6. Run `python manage.py createsuperuser` once for admin access.
 

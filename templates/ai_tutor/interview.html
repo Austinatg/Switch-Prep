@@ -1,0 +1,32 @@
+{% extends "ai_tutor/base_ai.html" %}
+{% block ai_title %}Interview Practice — DataForge{% endblock %}
+{% block breadcrumb %}<a href="{% url 'ai_tutor:interview_setup' %}">Interview simulator</a> / Practice{% endblock %}
+{% block ai_heading %}{{ session.category|title }} interview{% endblock %}
+{% block ai_intro %}{{ session.difficulty|title }} level · Question {{ question.question_number }} of {{ session.total_questions }}{% endblock %}
+{% block ai_content %}
+<section class="ai-panel ai-interview-panel">
+  <div class="ai-interview-progress"><span style="width:{% widthratio question.question_number session.total_questions 100 %}%"></span></div>
+  <div class="ai-question-meta"><span>QUESTION {{ question.question_number|stringformat:"02d" }}</span><span>{{ session.get_difficulty_display }}</span></div>
+  <h2 class="ai-interview-question">{{ question.question_text }}</h2>
+  {% if question.user_answer %}
+    <div class="ai-candidate-answer"><div class="eyebrow">YOUR ANSWER</div><p>{{ question.user_answer|linebreaksbr }}</p></div>
+    <div class="ai-evaluation-card">
+      <div class="ai-evaluation-score"><strong>{{ question.score }}</strong><span>/ 10</span></div>
+      <div><div class="eyebrow">FEEDBACK</div><p>{{ question.evaluation.explanation }}</p></div>
+      {% if question.evaluation.strengths %}<div class="ai-evaluation-detail"><b>Strengths</b><p>{{ question.evaluation.strengths }}</p></div>{% endif %}
+      {% if question.evaluation.weaknesses %}<div class="ai-evaluation-detail"><b>Consider improving</b><p>{{ question.evaluation.weaknesses }}</p></div>{% endif %}
+      {% if question.evaluation.improved_answer %}<details class="ai-improved-answer"><summary>See a stronger answer approach</summary><p>{{ question.evaluation.improved_answer }}</p></details>{% endif %}
+    </div>
+    <form method="post" action="{% url 'ai_tutor:next_interview_question' session.id %}" data-ai-loading-form class="ai-next-question-form">
+      {% csrf_token %}
+      <button class="ai-button" type="submit">{% if question.question_number == session.total_questions %}Finish interview{% else %}Next question{% endif %} <i>→</i></button>
+    </form>
+  {% else %}
+    <form method="post" action="{% url 'ai_tutor:submit_interview_answer' session.id question.question_number %}" data-ai-loading-form class="ai-answer-form">
+      {% csrf_token %}
+      <div class="ai-form-field"><label for="{{ form.answer.id_for_label }}">Your answer</label>{{ form.answer }}{{ form.answer.errors }}</div>
+      <div class="ai-form-footer"><span>Take your time. Your answer is evaluated after submission.</span><button class="ai-button" type="submit">Submit answer <i>→</i></button></div>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}
