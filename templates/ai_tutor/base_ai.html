@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{% block ai_title %}DataForge AI{% endblock %}{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'ai_tutor/css/ai_tutor.css' %}">
+<script src="{% static 'ai_tutor/js/ai_tutor.js' %}" defer></script>
+<section class="ai-page">
+  <header class="ai-page-heading">
+    <div>
+      <div class="eyebrow">DATAFORGE AI · GEMINI</div>
+      <h1>{% block ai_heading %}Your AI learning workspace{% endblock %}</h1>
+      <p>{% block ai_intro %}Practical support for your Data Engineering journey.{% endblock %}</p>
+    </div>
+    <span class="ai-free-badge">Free-tier limits apply</span>
+  </header>
+  <nav class="ai-subnav" aria-label="AI tools">
+    <a href="{% url 'ai_tutor:dashboard' %}">Overview</a>
+    <a href="{% url 'ai_tutor:tutor' %}">AI Tutor</a>
+    <a href="{% url 'ai_tutor:code_assistant' %}">Code Assistant</a>
+    <a href="{% url 'ai_tutor:learning_path' %}">Learning plan</a>
+    <a href="{% url 'ai_tutor:interview_setup' %}">Interview simulator</a>
+  </nav>
+  {% block ai_content %}{% endblock %}
+</section>
+{% endblock %}

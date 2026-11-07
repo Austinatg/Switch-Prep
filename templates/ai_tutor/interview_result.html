@@ -1,0 +1,22 @@
+{% extends "ai_tutor/base_ai.html" %}
+{% block ai_title %}Interview Results — DataForge{% endblock %}
+{% block breadcrumb %}<a href="{% url 'ai_tutor:interview_setup' %}">Interview simulator</a> / Results{% endblock %}
+{% block ai_heading %}Interview review{% endblock %}
+{% block ai_intro %}{{ session.category|title }} · {{ session.difficulty|title }} · {{ session.total_questions }} questions{% endblock %}
+{% block ai_content %}
+<section class="ai-panel ai-result-summary">
+  <div class="ai-score-ring"><strong>{{ session.total_score }}%</strong><span>Overall</span></div>
+  <div><div class="eyebrow">PRACTICE COMPLETE</div><h2>Keep building on this practice</h2><p>Your score is a learning signal, not a hiring assessment. Review each explanation and try another interview when ready.</p><a class="ai-button" href="{% url 'ai_tutor:interview_setup' %}">Start another interview <i>→</i></a></div>
+</section>
+<div class="ai-result-questions">
+  {% for question in session.questions.all %}
+    <article class="ai-panel ai-result-question">
+      <div class="ai-question-meta"><span>QUESTION {{ question.question_number|stringformat:"02d" }}</span><strong>{{ question.score }} / 10</strong></div>
+      <h2>{{ question.question_text }}</h2>
+      <div class="ai-candidate-answer"><div class="eyebrow">YOUR ANSWER</div><p>{{ question.user_answer|default:"No answer submitted."|linebreaksbr }}</p></div>
+      {% if question.evaluation.explanation %}<p>{{ question.evaluation.explanation }}</p>{% endif %}
+      {% if question.evaluation.improved_answer %}<details class="ai-improved-answer"><summary>Review an improved approach</summary><p>{{ question.evaluation.improved_answer }}</p></details>{% endif %}
+    </article>
+  {% endfor %}
+</div>
+{% endblock %}

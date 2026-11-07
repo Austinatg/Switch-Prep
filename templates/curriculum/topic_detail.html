@@ -55,6 +55,10 @@ Lesson
     <div class="lesson-progress">
         <span style="width:{% if progress.is_completed %}100{% else %}0{% endif %}%"></span>
     </div>
+    <a class="button button-ghost lesson-ai-link"
+       href="{% url 'ai_tutor:lesson_tutor' specialization.slug topic.slug %}">
+        ✦ Ask AI about this lesson
+    </a>
 
     {% if blocked_prerequisites %}
     <div class="prerequisite-warning">

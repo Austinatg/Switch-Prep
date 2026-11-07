@@ -43,8 +43,8 @@
     </nav>
 
     <div class="sidebar-spacer"></div>
-    <a class="ai-nav {% if active_page == 'tutor' %}active{% endif %}" href="{% url 'tutor' %}">
-      <span>✧</span><span><b>AI DE Tutor</b><small>Ask, learn, build</small></span><span class="arrow">↗</span>
+    <a class="ai-nav {% if active_page == 'tutor' or active_page == 'ai_tutor' or active_page == 'code_assistant' or active_page == 'personalized_learning' or active_page == 'interview_simulator' %}active{% endif %}" href="{% url 'ai_tutor:dashboard' %}">
+      <span>✧</span><span><b>AI Learning Tools</b><small>Ask, learn, build</small></span><span class="arrow">↗</span>
     </a>
     <a class="nav-item {% if active_page == 'settings' %}active{% endif %}" href="{% url 'accounts:profile' %}"><span>⚙</span>Settings</a>
 

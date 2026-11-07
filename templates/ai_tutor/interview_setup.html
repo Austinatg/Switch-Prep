@@ -1,0 +1,31 @@
+{% extends "ai_tutor/base_ai.html" %}
+{% block ai_title %}Interview Simulator — DataForge{% endblock %}
+{% block breadcrumb %}Interview Simulator{% endblock %}
+{% block ai_heading %}{% if history_only %}Interview history{% else %}Practice your next interview{% endif %}{% endblock %}
+{% block ai_intro %}Prepare for Data Engineering interviews with generated questions and constructive answer feedback.{% endblock %}
+{% block ai_content %}
+{% if not history_only %}
+<section class="ai-panel ai-interview-setup">
+  <div class="ai-panel-heading"><div><div class="eyebrow">MOCK INTERVIEW</div><h2>Choose your practice session</h2></div><span class="ai-feature-icon">◎</span></div>
+  <form method="post" action="{% url 'ai_tutor:start_interview' %}" data-ai-loading-form>
+    {% csrf_token %}
+    <div class="ai-form-row ai-interview-options">
+      <div class="ai-form-field"><label for="{{ form.category.id_for_label }}">Interview area</label>{{ form.category }}{{ form.category.errors }}</div>
+      <div class="ai-form-field"><label for="{{ form.difficulty.id_for_label }}">Difficulty</label>{{ form.difficulty }}{{ form.difficulty.errors }}</div>
+      <div class="ai-form-field"><label for="{{ form.total_questions.id_for_label }}">Length</label>{{ form.total_questions }}{{ form.total_questions.errors }}</div>
+    </div>
+    <div class="ai-data-note">Each generated question and answer evaluation uses one request from your daily free-tier limit. No paid fallback is used.</div>
+    <div class="ai-form-footer"><span>Choose up to 15 questions</span><button class="ai-button" type="submit">Generate interview <i>→</i></button></div>
+  </form>
+</section>
+{% endif %}
+<section class="ai-panel ai-history-panel">
+  <div class="ai-panel-heading"><div><div class="eyebrow">YOUR PRACTICE</div><h2>{% if history_only %}All interviews{% else %}Recent interviews{% endif %}</h2></div>{% if history_only %}<a href="{% url 'ai_tutor:interview_setup' %}">New interview →</a>{% else %}<a href="{% url 'ai_tutor:interview_history' %}">View all →</a>{% endif %}</div>
+  {% for item in history %}
+    <a class="ai-history-row" href="{% if item.status == 'completed' %}{% url 'ai_tutor:interview_result' item.id %}{% else %}{% url 'ai_tutor:interview' item.id %}{% endif %}">
+      <span><b>{{ item.category|title }} · {{ item.difficulty|title }}</b><small>{{ item.total_questions }} questions · {{ item.get_status_display }} · {{ item.created_at|date:"M j, Y · H:i" }}</small></span>
+      <strong>{% if item.status == "completed" %}{{ item.total_score }}%{% else %}Continue →{% endif %}</strong>
+    </a>
+  {% empty %}<p class="ai-muted">Your interview sessions will appear here after you start one.</p>{% endfor %}
+</section>
+{% endblock %}

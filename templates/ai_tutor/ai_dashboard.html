@@ -1,0 +1,40 @@
+{% extends "ai_tutor/base_ai.html" %}
+{% block ai_title %}AI Learning Workspace — DataForge{% endblock %}
+{% block breadcrumb %}AI Workspace{% endblock %}
+{% block ai_heading %}Your AI learning workspace{% endblock %}
+{% block ai_intro %}Four focused tools to help you learn, practice and prepare.{% endblock %}
+{% block ai_content %}
+<div class="ai-feature-grid">
+  <a class="ai-feature-card" href="{% url 'ai_tutor:tutor' %}">
+    <span class="ai-feature-icon">✦</span><span class="ai-feature-label">LEARN</span>
+    <h2>AI Tutor</h2><p>Ask questions about Data Engineering concepts and your lessons.</p><b>Start a conversation <i>→</i></b>
+  </a>
+  <a class="ai-feature-card" href="{% url 'ai_tutor:code_assistant' %}">
+    <span class="ai-feature-icon">⌘</span><span class="ai-feature-label">BUILD</span>
+    <h2>Code Assistant</h2><p>Explain, review, debug and improve code without executing it.</p><b>Review code <i>→</i></b>
+  </a>
+  <a class="ai-feature-card" href="{% url 'ai_tutor:learning_path' %}">
+    <span class="ai-feature-icon">↗</span><span class="ai-feature-label">PLAN</span>
+    <h2>Personalized Learning</h2><p>Get next-step recommendations grounded in your saved progress.</p><b>Build a learning plan <i>→</i></b>
+  </a>
+  <a class="ai-feature-card" href="{% url 'ai_tutor:interview_setup' %}">
+    <span class="ai-feature-icon">◎</span><span class="ai-feature-label">PRACTICE</span>
+    <h2>Interview Simulator</h2><p>Practice role-focused questions and receive constructive feedback.</p><b>Start an interview <i>→</i></b>
+  </a>
+</div>
+<div class="ai-history-grid">
+  <section class="ai-panel">
+    <div class="ai-panel-heading"><div><div class="eyebrow">RECENT</div><h2>Tutor conversations</h2></div><a href="{% url 'ai_tutor:tutor' %}">Open tutor →</a></div>
+    {% for item in conversations %}
+      <a class="ai-history-row" href="{% url 'ai_tutor:conversation' item.id %}"><span><b>{{ item.title|default:item.lesson_title|default:"New conversation" }}</b><small>{{ item.updated_at|date:"M j, Y · H:i" }}</small></span><i>→</i></a>
+    {% empty %}<p class="ai-muted">Your conversations will appear here.</p>{% endfor %}
+  </section>
+  <section class="ai-panel">
+    <div class="ai-panel-heading"><div><div class="eyebrow">PRACTICE</div><h2>Interview history</h2></div><a href="{% url 'ai_tutor:interview_history' %}">View all →</a></div>
+    {% for item in interviews %}
+      <a class="ai-history-row" href="{% if item.status == 'completed' %}{% url 'ai_tutor:interview_result' item.id %}{% else %}{% url 'ai_tutor:interview' item.id %}{% endif %}"><span><b>{{ item.get_category_display|default:item.category|title }} · {{ item.get_difficulty_display|default:item.difficulty|title }}</b><small>{{ item.get_status_display }} · {{ item.created_at|date:"M j, Y" }}</small></span><i>→</i></a>
+    {% empty %}<p class="ai-muted">Completed and active interviews will appear here.</p>{% endfor %}
+  </section>
+</div>
+<p class="ai-usage-note">AI responses can be inaccurate. Review technical details before using them. Free-tier quotas are limited; no paid fallback is used.</p>
+{% endblock %}
