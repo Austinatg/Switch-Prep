@@ -1,4 +1,4 @@
-# DataForge — Phase 3: Curriculum Engine
+# SwitchFromTredence — Phase 3: Curriculum Engine
 
 This release adds an admin-managed curriculum engine on top of the Phase 2 project.
 

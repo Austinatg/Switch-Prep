@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080d19">
-  <title>{% block title %}DataForge{% endblock %}</title>
+  <title>{% block title %}SwitchFromTredence{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <link rel="stylesheet" href="{% static 'css/phases9_12.css' %}">
   <script src="{% static 'js/app.js' %}" defer></script>
@@ -16,7 +16,7 @@
 <div class="app-shell">
   <aside class="sidebar" id="sidebar">
     <a class="brand" href="{% url 'dashboard' %}">
-      <span class="brand-mark">D</span><span>DataForge</span>
+      <span>SwitchFromTredence</span>
     </a>
 
     <div class="workspace-label">WORKSPACE</div>
@@ -56,7 +56,9 @@
       </div>
       <form method="post" action="{% url 'accounts:logout' %}">
         {% csrf_token %}
-        <button class="logout-icon" title="Log out" aria-label="Log out">↗</button>
+        <button class="logout-button" title="Log out">
+          <span aria-hidden="true">↗</span> Log out
+        </button>
       </form>
     </div>
   </aside>
@@ -73,7 +75,7 @@
     </header>
 {% else %}
 <header class="public-header">
-  <a class="brand" href="{% url 'home' %}"><span class="brand-mark">D</span>DataForge</a>
+  <a class="brand" href="{% url 'home' %}">SwitchFromTredence</a>
   <nav>
     <a href="{% url 'accounts:login' %}">Log in</a>
     <a class="button button-small" href="{% url 'accounts:register' %}">Get started</a>
@@ -93,11 +95,11 @@
 </main>
 
 {% if request.user.is_authenticated %}
-    <footer class="app-footer">DataForge <span>·</span> Learn Data Engineering, one milestone at a time.</footer>
+    <footer class="app-footer">SwitchFromTredence <span>·</span> Learn Data Engineering, one milestone at a time.</footer>
   </div>
 </div>
 {% else %}
-<footer class="public-footer">DataForge <span>·</span> Learn Data Engineering, one milestone at a time.</footer>
+<footer class="public-footer">SwitchFromTredence <span>·</span> Learn Data Engineering, one milestone at a time.</footer>
 {% endif %}
 
 </body>

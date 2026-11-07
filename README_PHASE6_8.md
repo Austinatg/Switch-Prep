@@ -1,4 +1,4 @@
-# DataForge — Phases 6, 7 and 8
+# SwitchFromTredence — Phases 6, 7 and 8
 
 This is an upgrade to the working Phase 4–5 project. It preserves the existing Django architecture, user accounts, curriculum, notes, bookmarks and topic progress.
 

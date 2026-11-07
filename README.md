@@ -1,6 +1,6 @@
-# DataForge — Complete Release (Phases 1–12)
+# SwitchFromTredence — Complete Release (Phases 1–12)
 
-DataForge is a free-to-use Django learning platform for Data Engineering. This package combines the existing Phases 1–8 with the integrated community, collaboration, messaging, AI tutor and production-readiness work in Phases 9–12.
+SwitchFromTredence is a free-to-use Django learning platform for Data Engineering. This package combines the existing Phases 1–8 with the integrated community, collaboration, messaging, AI tutor and production-readiness work in Phases 9–12.
 
 ## What's included
 
@@ -8,7 +8,7 @@ DataForge is a free-to-use Django learning platform for Data Engineering. This p
 - **3–4 · Learning engine:** specializations, modules, sections, topics, structured lesson reader, bookmarks, assessments and progress.
 - **5 · Notes:** daily notes, importance labels, editing, search and calendar archive.
 - **6–8 · Practice:** practical labs, guided projects, capstones, certification tracks and mock exams.
-- **9 · DataForge Connect:** learner discovery, connection requests, daily five-question battles, submissions and connection-only peer reviews.
+- **9 · SwitchFromTredence Connect:** learner discovery, connection requests, daily five-question battles, submissions and connection-only peer reviews.
 - **10 · Collaborative learning:** shared notebooks, invited members, comments, AI-assisted study-guide compilation and an optional AI Data Engineering tutor.
 - **11 · Communication:** private messages between accepted connections, automatic refresh while chat is open, unread/read tracking and last-seen presence.
 - **12 · Release readiness:** security defaults, environment configuration, migration files, tests, deployment notes and operational health endpoint.
@@ -59,14 +59,14 @@ Use a provider/model available to your account. API usage may incur charges; the
 
 ## Email verification and password recovery
 
-For local development, `EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend` prints verification/reset emails in the terminal. For production, configure SMTP with `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS` and `DEFAULT_FROM_EMAIL`. Use an app password or provider credential, not your personal mailbox password.
+Email verification and Django password-recovery messages are sent using the official Gmail API and OAuth 2.0 as `switchcompapp@gmail.com`. SMTP, Gmail passwords, App Passwords and external email providers are not used. Configure `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, `GOOGLE_OAUTH_REFRESH_TOKEN`, `GOOGLE_OAUTH_TOKEN_URI` and `GMAIL_SENDER_EMAIL` as described in [docs/GMAIL_API_SETUP.md](./docs/GMAIL_API_SETUP.md). Registration and email verification tests mock Gmail API requests; they never send actual email.
 
 ## Render deployment
 
 1. Create a managed PostgreSQL database and a Render web service.
 2. Set `DATABASE_URL` to the database's **internal** connection URL where supported.
 3. Set `SECRET_KEY` to a newly generated secret, `DEBUG=False`, `ALLOWED_HOSTS` to your Render hostname and `CSRF_TRUSTED_ORIGINS` to `https://your-service.onrender.com`.
-4. Configure production SMTP and optional AI environment variables.
+4. Configure the Gmail OAuth environment variables and optional AI environment variables.
 5. Use the included `render.yaml` build/start commands; ensure migrations run before serving traffic.
 6. Run `python manage.py createsuperuser` once for admin access.
 
@@ -91,7 +91,7 @@ python manage.py collectstatic --noinput
 ## Important security notes
 
 - `.env` is intentionally not included. Copy `.env.example` to `.env` and provide fresh secrets.
-- Do not upload API keys, SMTP passwords or production database URLs to source control.
+- Do not upload API keys, OAuth client secrets, refresh tokens or production database URLs to source control.
 - The uploaded archive contained a local `.env`; it was excluded from this release. If it contained live credentials, rotate them.
 - Keep Django, its dependencies and your host environment updated.
 # Switch-Prep

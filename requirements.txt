@@ -4,3 +4,7 @@ whitenoise>=6.9,<7
 dj-database-url>=2.3,<3
 psycopg[binary]>=3.2,<4
 python-dotenv>=1,<2
+google-api-python-client>=2.160,<3
+google-auth>=2.38,<3
+google-auth-oauthlib>=1.2,<2
+google-auth-httplib2>=0.2,<1

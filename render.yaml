@@ -19,20 +19,16 @@ services:
         sync: false
       - key: CSRF_TRUSTED_ORIGINS
         value: https://*.onrender.com
-      - key: EMAIL_BACKEND
-        value: django.core.mail.backends.smtp.EmailBackend
-      - key: EMAIL_HOST
+      - key: GOOGLE_OAUTH_CLIENT_ID
         sync: false
-      - key: EMAIL_PORT
-        value: 587
-      - key: EMAIL_HOST_USER
+      - key: GOOGLE_OAUTH_CLIENT_SECRET
         sync: false
-      - key: EMAIL_HOST_PASSWORD
+      - key: GOOGLE_OAUTH_REFRESH_TOKEN
         sync: false
-      - key: EMAIL_USE_TLS
-        value: true
-      - key: DEFAULT_FROM_EMAIL
-        value: DataForge <no-reply@example.com>
+      - key: GOOGLE_OAUTH_TOKEN_URI
+        value: https://oauth2.googleapis.com/token
+      - key: GMAIL_SENDER_EMAIL
+        value: switchcompapp@gmail.com
       - key: AI_API_KEY
         sync: false
       - key: AI_API_BASE_URL
