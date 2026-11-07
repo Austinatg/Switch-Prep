@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Assessment result — DataForge{% endblock %}
+{% block breadcrumb %}Assessment result{% endblock %}
+{% block content %}
+<div class="assessment-wrap">
+ <section class="panel result-hero"><div class="eyebrow">ASSESSMENT RESULT</div><div class="result-score">{{ attempt.percentage }}<small>%</small></div><h1>{% if attempt.passed %}Well done — you passed!{% else %}Keep practicing{% endif %}</h1><p>You answered {{ attempt.score }} out of {{ attempt.total_questions }} questions correctly. Passing score: {{ attempt.assessment.pass_percentage }}%.</p><span class="result-status {% if attempt.passed %}passed{% else %}failed{% endif %}">{% if attempt.passed %}PASSED{% else %}NOT PASSED{% endif %}</span></section>
+ {% for row in result_rows %}
+ <section class="panel review-question"><div class="question-number">QUESTION {{ forloop.counter }}</div><h3>{{ row.question.prompt }}</h3>
+  <p class="{% if row.is_correct %}answer-correct{% else %}answer-wrong{% endif %}">{% if row.is_correct %}✓ Correct{% else %}✕ Incorrect{% endif %}</p>
+  {% if row.selected %}<p class="muted">Your answer: {{ row.selected.text }}</p>{% else %}<p class="muted">You did not answer this question.</p>{% endif %}
+  {% if row.correct_choice %}<p class="muted">Correct answer: <b>{{ row.correct_choice.text }}</b></p>{% endif %}
+  {% if row.question.explanation %}<p class="answer-explanation">{{ row.question.explanation }}</p>{% endif %}
+ </section>
+ {% endfor %}
+ <a class="button button-ghost" href="{% url 'curriculum:specialization_detail' attempt.assessment.section.module.specialization.slug %}">Back to learning path</a>
+</div>
+{% endblock %}

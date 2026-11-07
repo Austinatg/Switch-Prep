@@ -1,0 +1,564 @@
+[
+  {
+    "module_order": 8,
+    "module_title": "Azure Event Hubs and Stream Analytics",
+    "topic_order": 1,
+    "title": "Event Hubs namespaces, hubs and partitions",
+    "summary": "Event Hubs namespaces, hubs and partitions is an engineering capability within azure event hubs and stream analytics.",
+    "content": "Event Hubs namespaces, hubs and partitions is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling partition boundaries, data distribution,\nparallelism and skew. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid record,\nhow is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor event hubs namespaces, hubs and partitions, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement event\nhubs namespaces, hubs and partitions, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on partition boundaries, data distribution, parallelism and skew. Avoid choosing a service\nsolely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that event hubs namespaces, hubs and partitions solves.\n• Explain the main design trade-offs around partition boundaries, data distribution, parallelism and skew.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Event Hubs namespaces, hubs and partitions is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling partition boundaries, data distribution,\nparallelism and skew. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid record,\nhow is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor event hubs namespaces, hubs and partitions, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement event\nhubs namespaces, hubs and partitions, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on partition boundaries, data distribution, parallelism and skew. Avoid choosing a service\nsolely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain event hubs namespaces, hubs and partitions and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that event hubs namespaces, hubs and partitions solves.",
+      "Explain the main design trade-offs around partition boundaries, data distribution, parallelism and skew.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Event Hubs namespaces, hubs and partitions solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Event Hubs namespaces, hubs and partitions for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Event Hubs namespaces, hubs and partitions?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Event Hubs namespaces, hubs and partitions?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Event Hubs namespaces, hubs and partitions when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Microsoft Purview",
+          "url": "https://learn.microsoft.com/purview/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Event Hubs namespaces, hubs and partitions",
+          "url": "https://www.youtube.com/results?search_query=Event+Hubs+namespaces%2C+hubs+and+partitions+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Event Hubs namespaces, hubs and partitions",
+          "url": "https://www.google.com/search?tbm=isch&q=Event+Hubs+namespaces%2C+hubs+and+partitions+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Event+Hubs+namespaces%2C+hubs+and+partitions+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Event Hubs namespaces, hubs and partitions",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Event Hubs namespaces, hubs and partitions in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 8,
+    "module_title": "Azure Event Hubs and Stream Analytics",
+    "topic_order": 2,
+    "title": "Producer design, throughput units and capture",
+    "summary": "Producer design, throughput units and capture is an engineering capability within azure event hubs and stream analytics.",
+    "content": "Producer design, throughput units and capture is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling service selection, secure configuration,\ndata movement, operational monitoring and cost-aware deployment. Engineers should make assumptions explicit: what is the\nsource of truth, what constitutes a valid record, how is progress tracked, what happens when work is repeated, and how can\nthe system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor producer design, throughput units and capture, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement producer\ndesign, throughput units and capture, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on service selection, secure configuration, data movement, operational monitoring and\ncost-aware deployment. Avoid choosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\n\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that producer design, throughput units and capture solves.\n• Explain the main design trade-offs around service selection, secure configuration, data movement, operational monitoring and cost-aware\ndeployment.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Producer design, throughput units and capture is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling service selection, secure configuration,\ndata movement, operational monitoring and cost-aware deployment. Engineers should make assumptions explicit: what is the\nsource of truth, what constitutes a valid record, how is progress tracked, what happens when work is repeated, and how can\nthe system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor producer design, throughput units and capture, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement producer\ndesign, throughput units and capture, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on service selection, secure configuration, data movement, operational monitoring and\ncost-aware deployment. Avoid choosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\n\nenvironment.",
+    "learning_objectives": [
+      "Explain producer design, throughput units and capture and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that producer design, throughput units and capture solves.",
+      "Explain the main design trade-offs around service selection, secure configuration, data movement, operational monitoring and cost-aware",
+      "deployment.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Producer design, throughput units and capture solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Producer design, throughput units and capture for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Producer design, throughput units and capture?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Producer design, throughput units and capture?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Producer design, throughput units and capture when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Microsoft Purview",
+          "url": "https://learn.microsoft.com/purview/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Producer design, throughput units and capture",
+          "url": "https://www.youtube.com/results?search_query=Producer+design%2C+throughput+units+and+capture+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Producer design, throughput units and capture",
+          "url": "https://www.google.com/search?tbm=isch&q=Producer+design%2C+throughput+units+and+capture+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Producer+design%2C+throughput+units+and+capture+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Producer design, throughput units and capture",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Producer design, throughput units and capture in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 8,
+    "module_title": "Azure Event Hubs and Stream Analytics",
+    "topic_order": 3,
+    "title": "Consumer groups, offsets and checkpointing",
+    "summary": "Consumer groups, offsets and checkpointing is an engineering capability within azure event hubs and stream analytics.",
+    "content": "Consumer groups, offsets and checkpointing is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling service selection, secure configuration,\ndata movement, operational monitoring and cost-aware deployment. Engineers should make assumptions explicit: what is the\nsource of truth, what constitutes a valid record, how is progress tracked, what happens when work is repeated, and how can\nthe system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor consumer groups, offsets and checkpointing, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\nconsumer groups, offsets and checkpointing, landing source data in governed storage and publishing trusted analytical\ndatasets to reporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on service selection, secure configuration, data movement, operational monitoring and\ncost-aware deployment. Avoid choosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that consumer groups, offsets and checkpointing solves.\n• Explain the main design trade-offs around service selection, secure configuration, data movement, operational monitoring and cost-aware\ndeployment.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Consumer groups, offsets and checkpointing is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling service selection, secure configuration,\ndata movement, operational monitoring and cost-aware deployment. Engineers should make assumptions explicit: what is the\nsource of truth, what constitutes a valid record, how is progress tracked, what happens when work is repeated, and how can\nthe system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor consumer groups, offsets and checkpointing, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\nconsumer groups, offsets and checkpointing, landing source data in governed storage and publishing trusted analytical\ndatasets to reporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on service selection, secure configuration, data movement, operational monitoring and\ncost-aware deployment. Avoid choosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain consumer groups, offsets and checkpointing and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that consumer groups, offsets and checkpointing solves.",
+      "Explain the main design trade-offs around service selection, secure configuration, data movement, operational monitoring and cost-aware",
+      "deployment.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Consumer groups, offsets and checkpointing solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Consumer groups, offsets and checkpointing for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Consumer groups, offsets and checkpointing?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Consumer groups, offsets and checkpointing?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Consumer groups, offsets and checkpointing when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Microsoft Purview",
+          "url": "https://learn.microsoft.com/purview/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Consumer groups, offsets and checkpointing",
+          "url": "https://www.youtube.com/results?search_query=Consumer+groups%2C+offsets+and+checkpointing+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Consumer groups, offsets and checkpointing",
+          "url": "https://www.google.com/search?tbm=isch&q=Consumer+groups%2C+offsets+and+checkpointing+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Consumer+groups%2C+offsets+and+checkpointing+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Consumer groups, offsets and checkpointing",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Consumer groups, offsets and checkpointing in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 8,
+    "module_title": "Azure Event Hubs and Stream Analytics",
+    "topic_order": 4,
+    "title": "Azure Stream Analytics jobs and SQL-like queries",
+    "summary": "Azure Stream Analytics jobs and SQL-like queries is an engineering capability within azure event hubs and stream analytics.",
+    "content": "Azure Stream Analytics jobs and SQL-like queries is an engineering capability within azure event hubs and stream analytics. In\na production platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\n\nThe central design question is how to achieve the required outcome while controlling event contracts, partition keys, time\nsemantics, state and replay. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor azure stream analytics jobs and sql-like queries, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement azure\nstream analytics jobs and sql-like queries, landing source data in governed storage and publishing trusted analytical datasets\nto reporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on event contracts, partition keys, time semantics, state and replay. Avoid choosing a\nservice solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that azure stream analytics jobs and sql-like queries solves.\n• Explain the main design trade-offs around event contracts, partition keys, time semantics, state and replay.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Azure Stream Analytics jobs and SQL-like queries is an engineering capability within azure event hubs and stream analytics. In\na production platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\n\nThe central design question is how to achieve the required outcome while controlling event contracts, partition keys, time\nsemantics, state and replay. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor azure stream analytics jobs and sql-like queries, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement azure\nstream analytics jobs and sql-like queries, landing source data in governed storage and publishing trusted analytical datasets\nto reporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on event contracts, partition keys, time semantics, state and replay. Avoid choosing a\nservice solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain azure stream analytics jobs and sql-like queries and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that azure stream analytics jobs and sql-like queries solves.",
+      "Explain the main design trade-offs around event contracts, partition keys, time semantics, state and replay.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Azure Stream Analytics jobs and SQL-like queries solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Azure Stream Analytics jobs and SQL-like queries for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Azure Stream Analytics jobs and SQL-like queries?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Azure Stream Analytics jobs and SQL-like queries?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Azure Stream Analytics jobs and SQL-like queries when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Microsoft Purview",
+          "url": "https://learn.microsoft.com/purview/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Azure Stream Analytics jobs and SQL-like queries",
+          "url": "https://www.youtube.com/results?search_query=Azure+Stream+Analytics+jobs+and+SQL-like+queries+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Azure Stream Analytics jobs and SQL-like queries",
+          "url": "https://www.google.com/search?tbm=isch&q=Azure+Stream+Analytics+jobs+and+SQL-like+queries+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Azure+Stream+Analytics+jobs+and+SQL-like+queries+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Azure Stream Analytics jobs and SQL-like queries",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Azure Stream Analytics jobs and SQL-like queries in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 8,
+    "module_title": "Azure Event Hubs and Stream Analytics",
+    "topic_order": 5,
+    "title": "Event time, windows and late-arrival policies",
+    "summary": "Event time, windows and late-arrival policies is an engineering capability within azure event hubs and stream analytics.",
+    "content": "Event time, windows and late-arrival policies is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling event contracts, partition keys, time\nsemantics, state and replay. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor event time, windows and late-arrival policies, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement event\ntime, windows and late-arrival policies, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on event contracts, partition keys, time semantics, state and replay. Avoid choosing a\nservice solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that event time, windows and late-arrival policies solves.\n• Explain the main design trade-offs around event contracts, partition keys, time semantics, state and replay.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Event time, windows and late-arrival policies is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling event contracts, partition keys, time\nsemantics, state and replay. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor event time, windows and late-arrival policies, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement event\ntime, windows and late-arrival policies, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on event contracts, partition keys, time semantics, state and replay. Avoid choosing a\nservice solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain event time, windows and late-arrival policies and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that event time, windows and late-arrival policies solves.",
+      "Explain the main design trade-offs around event contracts, partition keys, time semantics, state and replay.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Event time, windows and late-arrival policies solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Event time, windows and late-arrival policies for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Event time, windows and late-arrival policies?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Event time, windows and late-arrival policies?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Event time, windows and late-arrival policies when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Microsoft Purview",
+          "url": "https://learn.microsoft.com/purview/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Event time, windows and late-arrival policies",
+          "url": "https://www.youtube.com/results?search_query=Event+time%2C+windows+and+late-arrival+policies+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Event time, windows and late-arrival policies",
+          "url": "https://www.google.com/search?tbm=isch&q=Event+time%2C+windows+and+late-arrival+policies+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Event+time%2C+windows+and+late-arrival+policies+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Event time, windows and late-arrival policies",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Event time, windows and late-arrival policies in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 8,
+    "module_title": "Azure Event Hubs and Stream Analytics",
+    "topic_order": 6,
+    "title": "Event Hubs Capture to Data Lake",
+    "summary": "Event Hubs Capture to Data Lake is an engineering capability within azure event hubs and stream analytics.",
+    "content": "Event Hubs Capture to Data Lake is an engineering capability within azure event hubs and stream analytics. In a production\nplatform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness, scalability,\nsecurity, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling event contracts, partition keys, time\nsemantics, state and replay. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor event hubs capture to data lake, distinguish the logical pattern from the product implementation. Products change, but the\nunderlying principles—clear contracts, deterministic processing, bounded resource use, observability, least privilege and\ntested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement event\nhubs capture to data lake, landing source data in governed storage and publishing trusted analytical datasets to reporting and\noperational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on event contracts, partition keys, time semantics, state and replay. Avoid choosing a\nservice solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that event hubs capture to data lake solves.\n• Explain the main design trade-offs around event contracts, partition keys, time semantics, state and replay.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Event Hubs Capture to Data Lake is an engineering capability within azure event hubs and stream analytics. In a production\nplatform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness, scalability,\nsecurity, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling event contracts, partition keys, time\nsemantics, state and replay. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor event hubs capture to data lake, distinguish the logical pattern from the product implementation. Products change, but the\nunderlying principles—clear contracts, deterministic processing, bounded resource use, observability, least privilege and\ntested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement event\nhubs capture to data lake, landing source data in governed storage and publishing trusted analytical datasets to reporting and\noperational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on event contracts, partition keys, time semantics, state and replay. Avoid choosing a\nservice solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain event hubs capture to data lake and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that event hubs capture to data lake solves.",
+      "Explain the main design trade-offs around event contracts, partition keys, time semantics, state and replay.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Event Hubs Capture to Data Lake solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Event Hubs Capture to Data Lake for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Event Hubs Capture to Data Lake?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Event Hubs Capture to Data Lake?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Event Hubs Capture to Data Lake when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Microsoft Purview",
+          "url": "https://learn.microsoft.com/purview/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Event Hubs Capture to Data Lake",
+          "url": "https://www.youtube.com/results?search_query=Event+Hubs+Capture+to+Data+Lake+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Event Hubs Capture to Data Lake",
+          "url": "https://www.google.com/search?tbm=isch&q=Event+Hubs+Capture+to+Data+Lake+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Event+Hubs+Capture+to+Data+Lake+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Event Hubs Capture to Data Lake",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Event Hubs Capture to Data Lake in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 8,
+    "module_title": "Azure Event Hubs and Stream Analytics",
+    "topic_order": 7,
+    "title": "Failure handling, replay and monitoring",
+    "summary": "Failure handling, replay and monitoring is an engineering capability within azure event hubs and stream analytics.",
+    "content": "Failure handling, replay and monitoring is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling signals, thresholds, diagnosis, ownership\nand actionable alerting. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor failure handling, replay and monitoring, distinguish the logical pattern from the product implementation. Products change,\nbut the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least privilege\nand tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement failure\nhandling, replay and monitoring, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on signals, thresholds, diagnosis, ownership and actionable alerting. Avoid choosing a\nservice solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that failure handling, replay and monitoring solves.\n• Explain the main design trade-offs around signals, thresholds, diagnosis, ownership and actionable alerting.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Failure handling, replay and monitoring is an engineering capability within azure event hubs and stream analytics. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling signals, thresholds, diagnosis, ownership\nand actionable alerting. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor failure handling, replay and monitoring, distinguish the logical pattern from the product implementation. Products change,\nbut the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least privilege\nand tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement failure\nhandling, replay and monitoring, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on signals, thresholds, diagnosis, ownership and actionable alerting. Avoid choosing a\nservice solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain failure handling, replay and monitoring and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that failure handling, replay and monitoring solves.",
+      "Explain the main design trade-offs around signals, thresholds, diagnosis, ownership and actionable alerting.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Failure handling, replay and monitoring solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Failure handling, replay and monitoring for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Failure handling, replay and monitoring?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Failure handling, replay and monitoring?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Failure handling, replay and monitoring when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Microsoft Purview",
+          "url": "https://learn.microsoft.com/purview/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Failure handling, replay and monitoring",
+          "url": "https://www.youtube.com/results?search_query=Failure+handling%2C+replay+and+monitoring+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Failure handling, replay and monitoring",
+          "url": "https://www.google.com/search?tbm=isch&q=Failure+handling%2C+replay+and+monitoring+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Failure+handling%2C+replay+and+monitoring+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Failure handling, replay and monitoring",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Failure handling, replay and monitoring in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  }
+]

@@ -1,0 +1,8 @@
+{% for field in form %}
+<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>
+{% if field.name == "password" or field.name == "password1" or field.name == "password2" or field.name == "new_password1" or field.name == "new_password2" %}
+<div class="password-wrap">{{ field }}<button type="button" class="password-toggle" data-password-toggle aria-label="Show password" aria-pressed="false" title="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+{% else %}{{ field }}{% endif %}
+{% if field.help_text %}<div class="help-text">{{ field.help_text|safe }}</div>{% endif %}
+{% for error in field.errors %}<div class="field-error">{{ error }}</div>{% endfor %}</div>{% endfor %}
+{% if form.non_field_errors %}<div class="field-error">{{ form.non_field_errors }}</div>{% endif %}

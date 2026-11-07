@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}DataForge — Data Engineering from zero to production{% endblock %}
+{% block content %}
+<section class="hero"><div class="eyebrow"><i class="pulse"></i> THE DATA ENGINEERING LEARNING PLATFORM</div>
+<h1>Build the skills.<br><span>Build the pipelines.</span></h1>
+<p class="hero-copy">A structured, hands-on journey from your first SQL query to production-grade data platforms. Learn fundamentals, cloud ecosystems, streaming, orchestration and enterprise architecture.</p>
+<div class="hero-actions"><a class="button" href="{% url 'accounts:register' %}">Start learning free <span>→</span></a><a class="button button-ghost" href="{% url 'accounts:login' %}">I already have an account</a></div>
+<div class="hero-meta"><span>✓ No subscription</span><span>✓ Practical projects</span><span>✓ Community learning</span></div></section>
+<section class="feature-grid"><article class="feature-card"><div class="feature-icon">⌘</div><h3>Structured roadmaps</h3><p>Follow clear learning paths from fundamentals to advanced specializations.</p></article><article class="feature-card"><div class="feature-icon">▤</div><h3>Learn by building</h3><p>Practice with labs, milestone projects and enterprise-style capstones.</p></article><article class="feature-card"><div class="feature-icon">◎</div><h3>Learn together</h3><p>Connect with peers, exchange daily challenges and build shared notes.</p></article></section>
+{% endblock %}

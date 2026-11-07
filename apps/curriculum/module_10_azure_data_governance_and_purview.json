@@ -1,0 +1,483 @@
+[
+  {
+    "module_order": 10,
+    "module_title": "Azure Data Governance and Purview",
+    "topic_order": 1,
+    "title": "Microsoft Purview governance concepts and account model",
+    "summary": "Microsoft Purview governance concepts and account model is an engineering capability within azure data governance and\npurview.",
+    "content": "Microsoft Purview governance concepts and account model is an engineering capability within azure data governance and\npurview. In a production platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects\ncorrectness, scalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling grain, keys, history, query patterns and\nconsumer requirements. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor microsoft purview governance concepts and account model, distinguish the logical pattern from the product\nimplementation. Products change, but the underlying principles—clear contracts, deterministic processing, bounded resource\nuse, observability, least privilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\nmicrosoft purview governance concepts and account model, landing source data in governed storage and publishing trusted\nanalytical datasets to reporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on grain, keys, history, query patterns and consumer requirements. Avoid choosing a service\nsolely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that microsoft purview governance concepts and account model solves.\n• Explain the main design trade-offs around grain, keys, history, query patterns and consumer requirements.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Microsoft Purview governance concepts and account model is an engineering capability within azure data governance and\npurview. In a production platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects\ncorrectness, scalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling grain, keys, history, query patterns and\nconsumer requirements. Engineers should make assumptions explicit: what is the source of truth, what constitutes a valid\nrecord, how is progress tracked, what happens when work is repeated, and how can the system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor microsoft purview governance concepts and account model, distinguish the logical pattern from the product\nimplementation. Products change, but the underlying principles—clear contracts, deterministic processing, bounded resource\nuse, observability, least privilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\nmicrosoft purview governance concepts and account model, landing source data in governed storage and publishing trusted\nanalytical datasets to reporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on grain, keys, history, query patterns and consumer requirements. Avoid choosing a service\nsolely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain microsoft purview governance concepts and account model and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that microsoft purview governance concepts and account model solves.",
+      "Explain the main design trade-offs around grain, keys, history, query patterns and consumer requirements.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Microsoft Purview governance concepts and account model solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Microsoft Purview governance concepts and account model for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Microsoft Purview governance concepts and account model?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Microsoft Purview governance concepts and account model?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Microsoft Purview governance concepts and account model when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Azure Well-Architected Framework",
+          "url": "https://learn.microsoft.com/azure/well-architected/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Microsoft Purview governance concepts and account model",
+          "url": "https://www.youtube.com/results?search_query=Microsoft+Purview+governance+concepts+and+account+model+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Microsoft Purview governance concepts and account model",
+          "url": "https://www.google.com/search?tbm=isch&q=Microsoft+Purview+governance+concepts+and+account+model+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Microsoft+Purview+governance+concepts+and+account+model+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Microsoft Purview governance concepts and account model",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Microsoft Purview governance concepts and account model in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 10,
+    "module_title": "Azure Data Governance and Purview",
+    "topic_order": 2,
+    "title": "Scanning data sources and collection hierarchy",
+    "summary": "Scanning data sources and collection hierarchy is an engineering capability within azure data governance and purview.",
+    "content": "Scanning data sources and collection hierarchy is an engineering capability within azure data governance and purview. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling service selection, secure configuration,\ndata movement, operational monitoring and cost-aware deployment. Engineers should make assumptions explicit: what is the\nsource of truth, what constitutes a valid record, how is progress tracked, what happens when work is repeated, and how can\nthe system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor scanning data sources and collection hierarchy, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\nscanning data sources and collection hierarchy, landing source data in governed storage and publishing trusted analytical\ndatasets to reporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on service selection, secure configuration, data movement, operational monitoring and\ncost-aware deployment. Avoid choosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that scanning data sources and collection hierarchy solves.\n• Explain the main design trade-offs around service selection, secure configuration, data movement, operational monitoring and cost-aware\ndeployment.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Scanning data sources and collection hierarchy is an engineering capability within azure data governance and purview. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling service selection, secure configuration,\ndata movement, operational monitoring and cost-aware deployment. Engineers should make assumptions explicit: what is the\nsource of truth, what constitutes a valid record, how is progress tracked, what happens when work is repeated, and how can\nthe system recover after interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor scanning data sources and collection hierarchy, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\nscanning data sources and collection hierarchy, landing source data in governed storage and publishing trusted analytical\ndatasets to reporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on service selection, secure configuration, data movement, operational monitoring and\ncost-aware deployment. Avoid choosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain scanning data sources and collection hierarchy and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that scanning data sources and collection hierarchy solves.",
+      "Explain the main design trade-offs around service selection, secure configuration, data movement, operational monitoring and cost-aware",
+      "deployment.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Scanning data sources and collection hierarchy solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Scanning data sources and collection hierarchy for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Scanning data sources and collection hierarchy?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Scanning data sources and collection hierarchy?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Scanning data sources and collection hierarchy when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Azure Well-Architected Framework",
+          "url": "https://learn.microsoft.com/azure/well-architected/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Scanning data sources and collection hierarchy",
+          "url": "https://www.youtube.com/results?search_query=Scanning+data+sources+and+collection+hierarchy+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Scanning data sources and collection hierarchy",
+          "url": "https://www.google.com/search?tbm=isch&q=Scanning+data+sources+and+collection+hierarchy+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Scanning+data+sources+and+collection+hierarchy+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Scanning data sources and collection hierarchy",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Scanning data sources and collection hierarchy in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 10,
+    "module_title": "Azure Data Governance and Purview",
+    "topic_order": 3,
+    "title": "Catalog search, glossary and data ownership",
+    "summary": "Catalog search, glossary and data ownership is an engineering capability within azure data governance and purview.",
+    "content": "Catalog search, glossary and data ownership is an engineering capability within azure data governance and purview. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling ownership, discoverability, lineage,\nclassification and policy enforcement. Engineers should make assumptions explicit: what is the source of truth, what\nconstitutes a valid record, how is progress tracked, what happens when work is repeated, and how can the system recover\nafter interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor catalog search, glossary and data ownership, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement catalog\nsearch, glossary and data ownership, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on ownership, discoverability, lineage, classification and policy enforcement. Avoid choosing\na service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that catalog search, glossary and data ownership solves.\n• Explain the main design trade-offs around ownership, discoverability, lineage, classification and policy enforcement.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Catalog search, glossary and data ownership is an engineering capability within azure data governance and purview. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling ownership, discoverability, lineage,\nclassification and policy enforcement. Engineers should make assumptions explicit: what is the source of truth, what\nconstitutes a valid record, how is progress tracked, what happens when work is repeated, and how can the system recover\nafter interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor catalog search, glossary and data ownership, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement catalog\nsearch, glossary and data ownership, landing source data in governed storage and publishing trusted analytical datasets to\nreporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on ownership, discoverability, lineage, classification and policy enforcement. Avoid choosing\na service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain catalog search, glossary and data ownership and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that catalog search, glossary and data ownership solves.",
+      "Explain the main design trade-offs around ownership, discoverability, lineage, classification and policy enforcement.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Catalog search, glossary and data ownership solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Catalog search, glossary and data ownership for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Catalog search, glossary and data ownership?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Catalog search, glossary and data ownership?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Catalog search, glossary and data ownership when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Azure Well-Architected Framework",
+          "url": "https://learn.microsoft.com/azure/well-architected/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Catalog search, glossary and data ownership",
+          "url": "https://www.youtube.com/results?search_query=Catalog+search%2C+glossary+and+data+ownership+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Catalog search, glossary and data ownership",
+          "url": "https://www.google.com/search?tbm=isch&q=Catalog+search%2C+glossary+and+data+ownership+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Catalog+search%2C+glossary+and+data+ownership+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Catalog search, glossary and data ownership",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Catalog search, glossary and data ownership in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 10,
+    "module_title": "Azure Data Governance and Purview",
+    "topic_order": 4,
+    "title": "Lineage capture and impact analysis",
+    "summary": "Lineage capture and impact analysis is an engineering capability within azure data governance and purview.",
+    "content": "Lineage capture and impact analysis is an engineering capability within azure data governance and purview. In a production\nplatform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness, scalability,\n\nsecurity, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling ownership, discoverability, lineage,\nclassification and policy enforcement. Engineers should make assumptions explicit: what is the source of truth, what\nconstitutes a valid record, how is progress tracked, what happens when work is repeated, and how can the system recover\nafter interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor lineage capture and impact analysis, distinguish the logical pattern from the product implementation. Products change, but\nthe underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least privilege and\ntested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement lineage\ncapture and impact analysis, landing source data in governed storage and publishing trusted analytical datasets to reporting\nand operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on ownership, discoverability, lineage, classification and policy enforcement. Avoid choosing\na service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that lineage capture and impact analysis solves.\n• Explain the main design trade-offs around ownership, discoverability, lineage, classification and policy enforcement.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Lineage capture and impact analysis is an engineering capability within azure data governance and purview. In a production\nplatform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness, scalability,\n\nsecurity, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling ownership, discoverability, lineage,\nclassification and policy enforcement. Engineers should make assumptions explicit: what is the source of truth, what\nconstitutes a valid record, how is progress tracked, what happens when work is repeated, and how can the system recover\nafter interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor lineage capture and impact analysis, distinguish the logical pattern from the product implementation. Products change, but\nthe underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least privilege and\ntested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement lineage\ncapture and impact analysis, landing source data in governed storage and publishing trusted analytical datasets to reporting\nand operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on ownership, discoverability, lineage, classification and policy enforcement. Avoid choosing\na service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain lineage capture and impact analysis and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that lineage capture and impact analysis solves.",
+      "Explain the main design trade-offs around ownership, discoverability, lineage, classification and policy enforcement.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Lineage capture and impact analysis solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Lineage capture and impact analysis for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Lineage capture and impact analysis?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Lineage capture and impact analysis?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Lineage capture and impact analysis when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Azure Well-Architected Framework",
+          "url": "https://learn.microsoft.com/azure/well-architected/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Lineage capture and impact analysis",
+          "url": "https://www.youtube.com/results?search_query=Lineage+capture+and+impact+analysis+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Lineage capture and impact analysis",
+          "url": "https://www.google.com/search?tbm=isch&q=Lineage+capture+and+impact+analysis+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Lineage+capture+and+impact+analysis+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Lineage capture and impact analysis",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Lineage capture and impact analysis in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 10,
+    "module_title": "Azure Data Governance and Purview",
+    "topic_order": 5,
+    "title": "Classification, sensitivity and PII discovery",
+    "summary": "Classification, sensitivity and PII discovery is an engineering capability within azure data governance and purview.",
+    "content": "Classification, sensitivity and PII discovery is an engineering capability within azure data governance and purview. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling identity boundaries, least privilege,\nencryption, auditability and controlled access. Engineers should make assumptions explicit: what is the source of truth, what\nconstitutes a valid record, how is progress tracked, what happens when work is repeated, and how can the system recover\nafter interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor classification, sensitivity and pii discovery, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\nclassification, sensitivity and pii discovery, landing source data in governed storage and publishing trusted analytical datasets\nto reporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on identity boundaries, least privilege, encryption, auditability and controlled access. Avoid\nchoosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that classification, sensitivity and pii discovery solves.\n• Explain the main design trade-offs around identity boundaries, least privilege, encryption, auditability and controlled access.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Classification, sensitivity and PII discovery is an engineering capability within azure data governance and purview. In a\nproduction platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects correctness,\nscalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling identity boundaries, least privilege,\nencryption, auditability and controlled access. Engineers should make assumptions explicit: what is the source of truth, what\nconstitutes a valid record, how is progress tracked, what happens when work is repeated, and how can the system recover\nafter interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor classification, sensitivity and pii discovery, distinguish the logical pattern from the product implementation. Products\nchange, but the underlying principles—clear contracts, deterministic processing, bounded resource use, observability, least\nprivilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\nclassification, sensitivity and pii discovery, landing source data in governed storage and publishing trusted analytical datasets\nto reporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on identity boundaries, least privilege, encryption, auditability and controlled access. Avoid\nchoosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain classification, sensitivity and pii discovery and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that classification, sensitivity and pii discovery solves.",
+      "Explain the main design trade-offs around identity boundaries, least privilege, encryption, auditability and controlled access.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Classification, sensitivity and PII discovery solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Classification, sensitivity and PII discovery for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Classification, sensitivity and PII discovery?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Classification, sensitivity and PII discovery?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Classification, sensitivity and PII discovery when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Azure Well-Architected Framework",
+          "url": "https://learn.microsoft.com/azure/well-architected/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Classification, sensitivity and PII discovery",
+          "url": "https://www.youtube.com/results?search_query=Classification%2C+sensitivity+and+PII+discovery+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Classification, sensitivity and PII discovery",
+          "url": "https://www.google.com/search?tbm=isch&q=Classification%2C+sensitivity+and+PII+discovery+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Classification%2C+sensitivity+and+PII+discovery+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Classification, sensitivity and PII discovery",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Classification, sensitivity and PII discovery in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  },
+  {
+    "module_order": 10,
+    "module_title": "Azure Data Governance and Purview",
+    "topic_order": 6,
+    "title": "Governance policies, stewardship and access workflows",
+    "summary": "Governance policies, stewardship and access workflows is an engineering capability within azure data governance and\npurview.",
+    "content": "Governance policies, stewardship and access workflows is an engineering capability within azure data governance and\npurview. In a production platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects\ncorrectness, scalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling dependency management, retries,\nidempotency, scheduling and recovery. Engineers should make assumptions explicit: what is the source of truth, what\nconstitutes a valid record, how is progress tracked, what happens when work is repeated, and how can the system recover\nafter interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor governance policies, stewardship and access workflows, distinguish the logical pattern from the product implementation.\nProducts change, but the underlying principles—clear contracts, deterministic processing, bounded resource use,\nobservability, least privilege and tested recovery—remain applicable across platforms.\n\nREAL-WORLD INDUSTRY EXAMPLE\nA company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\ngovernance policies, stewardship and access workflows, landing source data in governed storage and publishing trusted\nanalytical datasets to reporting and operational consumers.\n\nPRACTICAL IMPLEMENTATION AND DESIGN GUIDANCE\n1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on dependency management, retries, idempotency, scheduling and recovery. Avoid\nchoosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\n\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.\n\nIMPORTANT POINTS TO REMEMBER\n• State the business and technical problem that governance policies, stewardship and access workflows solves.\n• Explain the main design trade-offs around dependency management, retries, idempotency, scheduling and recovery.\n• Make processing repeatable and safe under retries and partial failure.\n• Validate outputs with explicit quality, freshness and completeness checks.\n• Measure reliability, performance and cost rather than relying on assumptions.",
+    "detailed_explanation": "Governance policies, stewardship and access workflows is an engineering capability within azure data governance and\npurview. In a production platform, it is not just a tool or a one-off transformation: it is a repeatable design decision that affects\ncorrectness, scalability, security, operability and the experience of downstream data consumers.\nThe central design question is how to achieve the required outcome while controlling dependency management, retries,\nidempotency, scheduling and recovery. Engineers should make assumptions explicit: what is the source of truth, what\nconstitutes a valid record, how is progress tracked, what happens when work is repeated, and how can the system recover\nafter interruption?\nA robust implementation separates configuration from processing logic, uses stable identifiers and explicit contracts, and\nrecords enough metadata to explain what ran, which input it processed, what it produced and whether the output passed\nvalidation. The correct design depends on workload size, concurrency, latency, retention, compliance, team capability and the\ncost of failure.\nFor governance policies, stewardship and access workflows, distinguish the logical pattern from the product implementation.\nProducts change, but the underlying principles—clear contracts, deterministic processing, bounded resource use,\nobservability, least privilege and tested recovery—remain applicable across platforms.",
+    "real_world_example": "A company operates sales, ERP and web-activity systems across business units. It uses Azure services to implement\ngovernance policies, stewardship and access workflows, landing source data in governed storage and publishing trusted\nanalytical datasets to reporting and operational consumers.",
+    "practical_guidance": "1. Begin with the business SLA, data classification, source connectivity, expected volume, latency, recovery and cost\nenvelope.\n2. Select the Azure service based on dependency management, retries, idempotency, scheduling and recovery. Avoid\nchoosing a service solely because it is familiar.\n3. Use managed identity wherever supported, least-privilege RBAC/ACLs, Key Vault for secrets and private connectivity for\nsensitive paths.\n4. Implement the flow with the relevant components from Azure Data Factory, ADLS Gen2, Azure Databricks, Synapse\n\nAnalytics, Event Hubs, Azure Monitor and Microsoft Entra ID. Parameterize environments and keep configuration separate\nfrom code.\n5. Capture pipeline/job run metadata, diagnostic logs, data-quality results, freshness and volume metrics.\n6. Validate retries, duplicate delivery, partial failures, replay, deployment rollback and budget alerts in a non-production\nenvironment.",
+    "learning_objectives": [
+      "Explain governance policies, stewardship and access workflows and its role in a production data platform.",
+      "Identify the architecture, configuration and operational trade-offs.",
+      "Apply the pattern to a realistic industry workload.",
+      "Validate correctness, security, reliability and performance."
+    ],
+    "key_takeaways": [
+      "State the business and technical problem that governance policies, stewardship and access workflows solves.",
+      "Explain the main design trade-offs around dependency management, retries, idempotency, scheduling and recovery.",
+      "Make processing repeatable and safe under retries and partial failure.",
+      "Validate outputs with explicit quality, freshness and completeness checks.",
+      "Measure reliability, performance and cost rather than relying on assumptions."
+    ],
+    "interview_questions": [
+      {
+        "question": "What problem does Governance policies, stewardship and access workflows solve, and when would you use it?",
+        "answer": "Define the problem, explain the workload conditions that make the pattern appropriate, and contrast it with one viable alternative. Mention scale, latency, correctness and operational constraints."
+      },
+      {
+        "question": "How would you design Governance policies, stewardship and access workflows for a production workload?",
+        "answer": "Walk through requirements, source and sink contracts, architecture, keys/partitioning, security, orchestration, observability and recovery. Explain why each decision fits the stated constraints."
+      },
+      {
+        "question": "What are the most common failure modes in Governance policies, stewardship and access workflows?",
+        "answer": "Discuss invalid or evolving schemas, duplicate/replayed data, partial writes, skew or capacity limits, permission failures and downstream outages. Pair each risk with prevention, detection and recovery."
+      },
+      {
+        "question": "How would you test and monitor a system that uses Governance policies, stewardship and access workflows?",
+        "answer": "Describe unit and integration tests, representative volume tests, reconciliation, data-quality checks, run metadata, logs, metrics, alerts and operational dashboards. Include a measurable success criterion."
+      },
+      {
+        "question": "How would you optimize Governance policies, stewardship and access workflows when volume or complexity grows?",
+        "answer": "Start with measurements and query/job plans. Identify whether the bottleneck is I/O, compute, network, skew, small files, concurrency or orchestration. Apply a targeted change and compare latency, throughput, failure rate and cost."
+      }
+    ],
+    "resources": {
+      "documentation": [
+        {
+          "title": "Azure Well-Architected Framework",
+          "url": "https://learn.microsoft.com/azure/well-architected/",
+          "description": "Official or authoritative product documentation.",
+          "is_free": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "Video lessons: Governance policies, stewardship and access workflows",
+          "url": "https://www.youtube.com/results?search_query=Governance+policies%2C+stewardship+and+access+workflows+Azure+Data+Engineering",
+          "description": "Topic-specific YouTube search results; select a current, reputable tutorial.",
+          "is_free": true
+        }
+      ],
+      "articles": [
+        {
+          "title": "Image and architecture diagram search: Governance policies, stewardship and access workflows",
+          "url": "https://www.google.com/search?tbm=isch&q=Governance+policies%2C+stewardship+and+access+workflows+Azure+Data+Engineering+architecture+diagram",
+          "description": "Find a relevant architecture diagram or educational visual. This is a search link, not an embedded image.",
+          "is_free": true
+        }
+      ]
+    },
+    "image": {
+      "url": null,
+      "search_url": "https://www.google.com/search?tbm=isch&q=Governance+policies%2C+stewardship+and+access+workflows+Azure+Data+Engineering+architecture+diagram",
+      "alt": "Architecture diagram illustrating Governance policies, stewardship and access workflows",
+      "generation_prompt": "Create a clean 16:9 educational architecture diagram for Governance policies, stewardship and access workflows in Azure Data Engineering. Show components, data flow, security boundaries and outputs with readable labels."
+    },
+    "difficulty": "intermediate",
+    "estimated_minutes": 35
+  }
+]

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}My notes — DataForge{% endblock %}
+{% block breadcrumb %}My notes{% endblock %}
+{% block content %}
+<section class="page-intro"><div class="eyebrow">YOUR PERSONAL KNOWLEDGE BASE</div><h1>Daily learning notes</h1><p>Capture one idea per card. Mark important points and revisit them whenever you need.</p></section>
+<div class="notes-toolbar">
+ <form method="get" class="notes-search"><input type="search" name="q" value="{{ query }}" placeholder="Search your note points..."><input type="hidden" name="date" value="{{ selected_date }}"><button class="button button-ghost" type="submit">Search</button>{% if query %}<a href="{% url 'notes:home' %}?date={{ selected_date }}">Clear</a>{% endif %}</form>
+ <a class="button button-ghost" href="{% url 'notes:calendar' %}">▦ Open calendar</a>
+</div>
+<div class="notes-layout">
+ <section class="notes-main">
+  <div class="notes-date-heading"><div><div class="eyebrow">SELECTED DAY</div><h2>{{ daily_note.learning_date|date:"l, d F Y" }}</h2></div><form method="get"><input type="date" name="date" value="{{ selected_date }}"><button class="button button-ghost" type="submit">Go</button></form></div>
+  <form method="post" action="{% url 'notes:add' %}" class="panel add-note-form">{% csrf_token %}<input type="hidden" name="learning_date" value="{{ selected_date }}"><label for="note-content">Add a new point</label><textarea id="note-content" name="content" rows="3" required placeholder="Write one concept, definition, command or learning insight..."></textarea><div class="add-note-footer"><select name="importance" aria-label="Importance"><option value="normal">No highlight</option><option value="red">Red — important</option><option value="yellow">Yellow — review</option><option value="highlight">Highlight</option></select><button class="button" type="submit">＋ Add point</button></div></form>
+  <div class="notes-count-row"><b>{% if query %}Search results{% else %}Your points{% endif %}</b><span>{{ points|length }} point{{ points|length|pluralize }}</span></div>
+  <div class="note-point-list">
+   {% for point in points %}
+   <article class="note-point-card importance-{{ point.importance }}"><div class="note-point-marker"></div><div class="note-point-body"><p>{{ point.content|linebreaksbr }}</p><small>Added {{ point.created_at|date:"H:i" }} · {{ point.get_importance_display }}</small></div><div class="note-point-actions"><a href="{% url 'notes:edit' point.id %}" title="Edit">✎</a><form method="post" action="{% url 'notes:delete' point.id %}" onsubmit="return confirm('Delete this note point?');">{% csrf_token %}<button type="submit" title="Delete">×</button></form></div></article>
+   {% empty %}<div class="panel notes-empty"><div>▤</div><h3>{% if query %}No matching notes{% else %}A fresh page for today{% endif %}</h3><p>{% if query %}Try a different search term.{% else %}Add your first learning point above. Your notes from each date stay archived automatically.{% endif %}</p></div>
+   {% endfor %}
+  </div>
+ </section>
+ <aside class="notes-sidebar panel"><div class="eyebrow">NOTE ARCHIVE</div><h3>Recent days</h3><p>Jump back to notes from an earlier day.</p>
+  {% for archived in archive %}<a class="archive-day" href="{% url 'notes:home' %}?date={{ archived.learning_date|date:'Y-m-d' }}"><span><b>{{ archived.learning_date|date:"D, d M" }}</b><small>{{ archived.points.count }} points</small></span><i>→</i></a>
+  {% empty %}<p class="muted">Your previous note days will appear here.</p>{% endfor %}
+  <a class="aside-action" href="{% url 'notes:calendar' %}">View full calendar →</a>
+ </aside>
+</div>
+{% endblock %}

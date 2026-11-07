@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ assessment.title }} — DataForge{% endblock %}
+{% block breadcrumb %}Section assessment{% endblock %}
+{% block content %}
+<div class="curriculum-back"><a href="{% url 'curriculum:specialization_detail' assessment.section.module.specialization.slug %}">← Back to roadmap</a></div>
+<div class="assessment-wrap">
+ <section class="panel assessment-header"><div class="eyebrow">KNOWLEDGE CHECK</div><h1>{{ assessment.title }}</h1><p>{{ assessment.description }}</p><div class="lesson-meta"><span>{{ assessment.questions.count }} questions</span><span>Pass mark {{ assessment.pass_percentage }}%</span>{% if assessment.time_limit_minutes %}<span>{{ assessment.time_limit_minutes }} minutes</span>{% endif %}</div></section>
+ {% if assessment.questions.all %}
+ <form method="post" action="{% url 'curriculum:submit_assessment' assessment.id %}" class="assessment-form">{% csrf_token %}
+  {% for question in assessment.questions.all %}
+  <section class="panel question-card"><div class="question-number">QUESTION {{ forloop.counter }} / {{ assessment.questions.count }}</div><h3>{{ question.prompt }}</h3>
+   <div class="choice-list">{% for choice in question.choices.all %}<label class="choice-option"><input type="radio" name="question_{{ question.id }}" value="{{ choice.id }}" required><span>{{ choice.text }}</span></label>{% endfor %}</div>
+  </section>
+  {% endfor %}
+  <button class="button" type="submit">Submit assessment →</button>
+ </form>
+ {% else %}<div class="panel no-results"><h3>Questions are being prepared</h3><p>An administrator needs to add questions and answer choices before this test can be taken.</p></div>{% endif %}
+ {% if previous_attempts %}<section class="panel attempt-history"><h2>Your previous attempts</h2>{% for attempt in previous_attempts %}<div class="attempt-row"><span>{{ attempt.submitted_at|date:"M d, Y H:i" }}</span><b>{{ attempt.score }}/{{ attempt.total_questions }} · {{ attempt.percentage }}%</b><span>{% if attempt.passed %}Passed{% else %}Not passed{% endif %}</span></div>{% endfor %}</section>{% endif %}
+</div>
+{% endblock %}

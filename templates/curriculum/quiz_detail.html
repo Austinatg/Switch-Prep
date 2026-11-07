@@ -1,0 +1,140 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }} — DataForge{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'curriculum:specialization_list' %}">
+    Learning paths
+</a>
+/
+<a href="{% url 'curriculum:specialization_detail' quiz.specialization.slug %}">
+    {{ quiz.specialization.name }}
+</a>
+/
+Examination
+{% endblock %}
+
+{% block content %}
+
+<div class="curriculum-back">
+    <a href="{% url 'curriculum:specialization_detail' quiz.specialization.slug %}">
+        ← Back to course
+    </a>
+</div>
+
+<section class="panel"
+         style="max-width:900px;margin:0 auto;padding:28px">
+
+    <div class="eyebrow">DATAFORGE EXAMINATION</div>
+
+    <h1>{{ quiz.title }}</h1>
+
+    <p>{{ quiz.description }}</p>
+
+    <div class="track-meta">
+        <span>{{ questions|length }} questions</span>
+        <span>One submission only</span>
+        <span>No passing percentage</span>
+    </div>
+
+    <div class="aside-note">
+        <b>Important:</b>
+        You can submit this examination only once.
+        Make sure you review all your answers before submitting.
+    </div>
+
+
+    <form method="post"
+          action="{% url 'curriculum:submit_quiz' quiz.id %}"
+          id="quiz-form">
+
+        {% csrf_token %}
+
+        {% for question in questions %}
+
+        <fieldset class="lesson-section quiz-question"
+                  style="border:0;border-top:1px solid var(--border,#ddd);padding:22px 0">
+
+            <legend>
+                <b>
+                    Question {{ forloop.counter }}
+                    of {{ questions|length }}
+                </b>
+            </legend>
+
+            <p class="quiz-question-prompt">
+                {{ question.prompt }}
+            </p>
+
+            {% for choice in question.shuffled_choices %}
+
+            <label class="quiz-option"
+                   style="display:flex;gap:12px;padding:12px;margin:8px 0;border:1px solid var(--border,#ddd);border-radius:10px;cursor:pointer">
+
+                <input type="radio"
+                       name="question_{{ question.id }}"
+                       value="{{ choice.id }}"
+                       required>
+
+                <span>{{ choice.text }}</span>
+
+            </label>
+
+            {% endfor %}
+
+        </fieldset>
+
+        {% endfor %}
+
+
+        <div class="quiz-submit-area">
+
+            <p class="muted">
+                Check your selected answers before submission.
+                This examination cannot be retaken.
+            </p>
+
+            <button class="button"
+                    type="submit"
+                    onclick="return confirm('Are you sure you want to submit? You cannot retake this examination.')">
+
+                Submit examination →
+
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+<style>
+.quiz-option {
+    transition: border-color .2s, background .2s;
+}
+
+.quiz-option:has(input:checked) {
+    border-color: var(--track-accent, #69a7ff) !important;
+    background: rgba(105,167,255,.08);
+}
+
+.quiz-option input {
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+.quiz-question-prompt {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 15px 0;
+}
+
+.quiz-submit-area {
+    border-top: 1px solid var(--border, #ddd);
+    padding-top: 22px;
+    margin-top: 20px;
+}
+</style>
+
+{% endblock %}

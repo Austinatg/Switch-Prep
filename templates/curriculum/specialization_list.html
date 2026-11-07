@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Learning paths — DataForge{% endblock %}
+{% block breadcrumb %}Learning paths{% endblock %}
+{% block content %}
+<section class="page-intro">
+ <div class="eyebrow">THE DATAFORGE LEARNING UNIVERSE</div>
+ <h1>Choose your specialization.</h1>
+ <p>Start with fundamentals or dive into a platform. Your progress is saved to your account.</p>
+</section>
+<form method="get" class="curriculum-search">
+ <input type="search" name="q" value="{{ query }}" placeholder="Search specializations, platforms or topics...">
+ <button class="button" type="submit">Search</button>
+ {% if query %}<a class="button button-ghost" href="{% url 'curriculum:specialization_list' %}">Clear</a>{% endif %}
+</form>
+<div class="specialization-grid">
+ {% for item in specializations %}
+ <a class="specialization-card" href="{% url 'curriculum:specialization_detail' item.slug %}" style="--track-accent:{{ item.accent_color }}">
+  <div class="specialization-card-top"><span class="track-icon">{{ item.icon }}</span><span class="level-pill">{{ item.get_level_display }}</span></div>
+  <h2>{{ item.name }}</h2><p>{{ item.short_description }}</p>
+  <div class="track-meta"><span>{{ item.modules_count }} modules</span><span>{{ item.topics_count }} topics</span><span>{{ item.estimated_hours }}h estimated</span></div>
+  <div class="track-link">Explore learning path <b>→</b></div>
+ </a>
+ {% empty %}
+ <div class="panel no-results"><h3>No learning paths found</h3><p>Try a different search term or check back when more paths are published.</p></div>
+ {% endfor %}
+</div>
+{% endblock %}

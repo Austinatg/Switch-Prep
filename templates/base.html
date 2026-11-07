@@ -1,0 +1,104 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d19">
+  <title>{% block title %}DataForge{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <link rel="stylesheet" href="{% static 'css/phases9_12.css' %}">
+  <script src="{% static 'js/app.js' %}" defer></script>
+</head>
+<body class="{% if request.user.is_authenticated %}app-body{% else %}public-body{% endif %}">
+
+{% if request.user.is_authenticated %}
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="{% url 'dashboard' %}">
+      <span class="brand-mark">D</span><span>DataForge</span>
+    </a>
+
+    <div class="workspace-label">WORKSPACE</div>
+    <nav class="side-nav">
+      <a class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}"><span>◫</span>Dashboard</a>
+      <a class="nav-item {% if active_page == 'learning' %}active{% endif %}" href="{% url 'curriculum:specialization_list' %}"><span>⌘</span>Learning paths</a>
+      <a class="nav-item {% if active_page == 'labs' %}active{% endif %}" href="{% url 'labs:list' %}"><span>⚗</span>Practical labs</a>
+      <a class="nav-item {% if active_page == 'projects' %}active{% endif %}" href="{% url 'projects:list' %}"><span>▣</span>Projects &amp; capstones</a>
+      <a class="nav-item {% if active_page == 'certifications' %}active{% endif %}" href="{% url 'certifications:list' %}"><span>♜</span>Certifications</a>
+    </nav>
+
+    <div class="workspace-label">YOUR SPACE</div>
+    <nav class="side-nav">
+      <a class="nav-item {% if active_page == 'notes' %}active{% endif %}" href="{% url 'notes:home' %}"><span>▤</span>My notes</a>
+      <a class="nav-item {% if active_page == 'calendar' %}active{% endif %}" href="{% url 'notes:calendar' %}"><span>▦</span>Learning calendar</a>
+    </nav>
+
+    <div class="workspace-label">COMMUNITY</div>
+    <nav class="side-nav">
+      <a class="nav-item {% if active_page == 'community' %}active{% endif %}" href="{% url 'community:home' %}"><span>♧</span>Connections &amp; battles</a>
+      <a class="nav-item" href="{% url 'community:battle' %}"><span>⚔</span>Daily battle</a>
+      <a class="nav-item" href="{% url 'collaboration:home' %}"><span>▤</span>Shared notebooks</a>
+      <a class="nav-item {% if active_page == 'messages' %}active{% endif %}" href="{% url 'messaging:inbox' %}"><span>◌</span>Messages</a>
+    </nav>
+
+    <div class="sidebar-spacer"></div>
+    <a class="ai-nav {% if active_page == 'tutor' %}active{% endif %}" href="{% url 'tutor' %}">
+      <span>✧</span><span><b>AI DE Tutor</b><small>Ask, learn, build</small></span><span class="arrow">↗</span>
+    </a>
+    <a class="nav-item {% if active_page == 'settings' %}active{% endif %}" href="{% url 'accounts:profile' %}"><span>⚙</span>Settings</a>
+
+    <div class="user-mini">
+      <div class="avatar">{{ request.user.first_name|default:request.user.email|slice:":1"|upper }}</div>
+      <div class="user-mini-info">
+        <b>{{ request.user.first_name|default:request.user.email }}</b>
+        <small>{{ request.user.email }}</small>
+      </div>
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button class="logout-icon" title="Log out" aria-label="Log out">↗</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="main-area">
+    <header class="app-header">
+      <button class="mobile-menu" id="mobileMenu" aria-label="Toggle navigation">☰</button>
+      <div class="breadcrumb">Workspace <span>/</span> <b>{% block breadcrumb %}Dashboard{% endblock %}</b></div>
+      <div class="header-actions">
+        <span class="free-pill">✦ Always free</span>
+        <a class="icon-button" title="Notifications" aria-label="Notifications" href="{% url 'messaging:notifications' %}">♧<i></i></a>
+        <a class="header-avatar" href="{% url 'accounts:profile' %}">{{ request.user.first_name|default:request.user.email|slice:":1"|upper }}</a>
+      </div>
+    </header>
+{% else %}
+<header class="public-header">
+  <a class="brand" href="{% url 'home' %}"><span class="brand-mark">D</span>DataForge</a>
+  <nav>
+    <a href="{% url 'accounts:login' %}">Log in</a>
+    <a class="button button-small" href="{% url 'accounts:register' %}">Get started</a>
+  </nav>
+</header>
+{% endif %}
+
+<main class="{% if request.user.is_authenticated %}content-area{% else %}public-main{% endif %}">
+  {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+{% if request.user.is_authenticated %}
+    <footer class="app-footer">DataForge <span>·</span> Learn Data Engineering, one milestone at a time.</footer>
+  </div>
+</div>
+{% else %}
+<footer class="public-footer">DataForge <span>·</span> Learn Data Engineering, one milestone at a time.</footer>
+{% endif %}
+
+</body>
+</html>

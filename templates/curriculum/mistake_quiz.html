@@ -1,0 +1,188 @@
+
+{% extends "base.html" %}
+
+{% block title %}Mistake Revision — {{ specialization.name }}{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'curriculum:specialization_list' %}">
+    Learning paths
+</a>
+/
+<a href="{% url 'curriculum:specialization_detail' specialization.slug %}">
+    {{ specialization.name }}
+</a>
+/
+Mistake revision
+{% endblock %}
+
+{% block content %}
+
+<div class="curriculum-back">
+    <a href="{% url 'curriculum:specialization_detail' specialization.slug %}">
+        ← Back to course
+    </a>
+</div>
+
+<section class="panel"
+         style="max-width:900px;margin:0 auto;padding:28px">
+
+    <div class="eyebrow">PERSONALIZED REVISION</div>
+
+    <h1>Mistake Revision Test</h1>
+
+
+    {% if mode == "mistakes" %}
+
+    <div class="mistake-mode-info">
+        <h3>Review your previous mistakes</h3>
+
+        <p>
+            These are questions you previously answered incorrectly
+            in lesson tests, module tests, or course examinations.
+        </p>
+
+        <p>
+            Questions answered correctly now will be removed
+            from your unresolved mistake list.
+            Questions answered incorrectly will remain.
+        </p>
+    </div>
+
+    {% else %}
+
+    <div class="mistake-mode-info">
+        <h3>Great work! No unresolved mistakes.</h3>
+
+        <p>
+            You currently have no unresolved mistakes in this course.
+            This is a random practice examination selected
+            from the course question bank.
+        </p>
+
+        <p>
+            You can take this practice examination repeatedly.
+            Each time, a new random selection may be generated.
+        </p>
+    </div>
+
+    {% endif %}
+
+
+    <div class="track-meta">
+        <span>{{ questions|length }} questions</span>
+        <span>Unlimited retakes</span>
+    </div>
+
+
+    <form method="post"
+          id="mistake-quiz-form">
+
+        {% csrf_token %}
+
+        {% for question in questions %}
+
+        <fieldset class="lesson-section mistake-question"
+                  style="border:0;border-top:1px solid var(--border,#ddd);padding:22px 0">
+
+            <legend>
+                <b>
+                    Question {{ forloop.counter }}
+                    of {{ questions|length }}
+                </b>
+            </legend>
+
+            <p class="mistake-question-prompt">
+                {{ question.prompt }}
+            </p>
+
+            {% for choice in question.shuffled_choices %}
+
+            <label class="mistake-option">
+
+                <input type="radio"
+                       name="question_{{ question.id }}"
+                       value="{{ choice.id }}"
+                       required>
+
+                <span>{{ choice.text }}</span>
+
+            </label>
+
+            {% endfor %}
+
+        </fieldset>
+
+        {% endfor %}
+
+
+        <div class="mistake-submit-area">
+
+            <p class="muted">
+                Review your answers before submitting.
+                You can repeat this revision examination.
+            </p>
+
+            <button class="button" type="submit">
+                Submit revision test →
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+
+<style>
+
+.mistake-mode-info {
+    padding: 18px;
+    margin: 20px 0;
+    border-radius: 12px;
+    background: var(--surface-secondary, rgba(120,120,120,.08));
+}
+
+.mistake-mode-info h3 {
+    margin-top: 0;
+}
+
+.mistake-mode-info p {
+    line-height: 1.6;
+}
+
+.mistake-question-prompt {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 15px 0;
+}
+
+.mistake-option {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid var(--border, #ddd);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+}
+
+.mistake-option:has(input:checked) {
+    border-color: var(--track-accent, #69a7ff);
+    background: rgba(105,167,255,.08);
+}
+
+.mistake-option input {
+    margin-top: 4px;
+}
+
+.mistake-submit-area {
+    border-top: 1px solid var(--border, #ddd);
+    padding-top: 22px;
+    margin-top: 20px;
+}
+
+</style>
+
+{% endblock %}

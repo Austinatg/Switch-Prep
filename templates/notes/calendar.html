@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% load note_extras %}
+{% block title %}Learning calendar — DataForge{% endblock %}
+{% block breadcrumb %}Learning calendar{% endblock %}
+{% block content %}
+<section class="page-intro"><div class="eyebrow">YOUR LEARNING HISTORY</div><h1>Notes calendar</h1><p>Every day with saved notes is marked. Select a date to revisit its points.</p></section>
+<section class="calendar-panel panel">
+ <div class="calendar-heading"><a class="calendar-nav" href="{% url 'notes:calendar' %}?month={{ prev_month }}">←</a><h2>{{ month_label }}</h2><a class="calendar-nav" href="{% url 'notes:calendar' %}?month={{ next_month }}">→</a></div>
+ <div class="calendar-grid calendar-weekdays"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+ <div class="calendar-grid">
+  {% for day in cells %}
+   {% if day %}
+    {% if day in note_map %}
+     <a class="calendar-day has-notes" href="{% url 'notes:home' %}?date={{ month|date:'Y-m' }}-{{ day|stringformat:'02d' }}"><b>{{ day }}</b><small>{{ note_counts|get_item:day }} notes</small></a>
+    {% else %}<span class="calendar-day"><b>{{ day }}</b></span>{% endif %}
+   {% else %}<span class="calendar-day blank"></span>{% endif %}
+  {% endfor %}
+ </div>
+ <div class="calendar-legend"><span class="legend-dot"></span> Days with saved notes</div>
+</section>
+<div class="calendar-footer"><a class="button button-ghost" href="{% url 'notes:home' %}">← Back to notes</a></div>
+{% endblock %}

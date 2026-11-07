@@ -1,0 +1,290 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ specialization.name }} — DataForge{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'curriculum:specialization_list' %}">Learning paths</a>
+/
+{{ specialization.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="curriculum-back">
+    <a href="{% url 'curriculum:specialization_list' %}">
+        ← All specializations
+    </a>
+</div>
+
+<section class="track-hero"
+         style="--track-accent:{{ specialization.accent_color }}">
+
+    <div class="eyebrow">SPECIALIZATION ROADMAP</div>
+
+    <div class="track-hero-icon">
+        {{ specialization.icon }}
+    </div>
+
+    <h1>{{ specialization.name }}</h1>
+
+    <p>
+        {{ specialization.description|default:specialization.short_description }}
+    </p>
+
+    <div class="track-meta">
+        <span>{{ specialization.get_level_display }}</span>
+        <span>{{ total_topics }} published topics</span>
+        <span>{{ specialization.estimated_hours }} estimated hours</span>
+    </div>
+
+    <div class="progress-heading">
+        <span>Your learning progress</span>
+        <b>
+            {{ completed_topics }} / {{ total_topics }} topics
+            · {{ progress_percent }}%
+        </b>
+    </div>
+
+    <div class="progress-track">
+        <div style="width:{{ progress_percent }}%"></div>
+    </div>
+
+</section>
+
+
+<!-- COURSE EXAMINATIONS -->
+
+<section class="lesson-section course-exams">
+
+    <div class="section-heading">
+        <div>
+            <div class="eyebrow">FINAL ASSESSMENTS</div>
+            <h2>Course examinations</h2>
+        </div>
+    </div>
+
+    <p class="muted">
+        Complete the lessons and module examinations to unlock
+        the final course examinations. Each final examination
+        can be submitted only once.
+    </p>
+
+    {% for quiz in course_quizzes %}
+
+    <a class="assessment-link-card"
+       href="{% url 'curriculum:quiz_detail' quiz.id %}">
+
+        <span>
+            <b>{{ quiz.title }}</b>
+            <small>
+                50 high-difficulty MCQs · One attempt only
+            </small>
+        </span>
+
+        <strong>Open test →</strong>
+
+    </a>
+
+    {% empty %}
+
+    <p class="muted">
+        Course examinations are being prepared.
+    </p>
+
+    {% endfor %}
+
+
+    <a class="assessment-link-card"
+       href="{% url 'curriculum:mistake_quiz' specialization.slug %}">
+
+        <span>
+            <b>Mistake Revision Test</b>
+
+            <small>
+                {{ mistake_count }} unresolved mistakes.
+                Unlimited retakes.
+                Random practice questions when no mistakes remain.
+            </small>
+        </span>
+
+        <strong>Practice mistakes →</strong>
+
+    </a>
+
+</section>
+
+
+<!-- MODULES AND TOPICS -->
+
+<section class="curriculum-layout">
+
+    <div class="curriculum-main">
+
+        <div class="section-heading">
+            <div>
+                <div class="eyebrow">YOUR ROADMAP</div>
+                <h2>Modules and topics</h2>
+            </div>
+        </div>
+
+        {% for module in modules %}
+
+        <article class="module-card">
+
+            <div class="module-heading">
+
+                <span class="module-number">
+                    {{ forloop.counter|stringformat:"02d" }}
+                </span>
+
+                <div>
+                    <h3>{{ module.title }}</h3>
+                    <p>{{ module.description }}</p>
+                </div>
+
+            </div>
+
+
+            {% for section in module.sections.all %}
+
+                {% if section.is_published %}
+
+                <div class="roadmap-section">
+
+                    <h4>{{ section.title }}</h4>
+
+                    {% for topic in section.topics.all %}
+
+                        {% if topic.is_published %}
+
+                        <a class="topic-row"
+                           href="{% url 'curriculum:topic_detail' specialization.slug topic.slug %}">
+
+                            <span class="topic-status {% if topic.id in completed_ids %}done{% endif %}">
+
+                                {% if topic.id in completed_ids %}
+                                    ✓
+                                {% else %}
+                                    {{ forloop.counter }}
+                                {% endif %}
+
+                            </span>
+
+                            <span class="topic-row-main">
+
+                                <b>{{ topic.title }}</b>
+
+                                <small>
+                                    {{ topic.summary|default:"Open this lesson to explore the concept." }}
+                                </small>
+
+                            </span>
+
+                            <span class="topic-duration">
+                                {{ topic.estimated_minutes }} min
+                            </span>
+
+                            <span class="topic-arrow">→</span>
+
+                        </a>
+
+                        {% endif %}
+
+                    {% empty %}
+
+                    <p class="muted small-muted">
+                        Topics will be added to this section.
+                    </p>
+
+                    {% endfor %}
+
+                </div>
+
+                {% endif %}
+
+            {% empty %}
+
+            <p class="muted">
+                Sections are being prepared.
+            </p>
+
+            {% endfor %}
+
+
+            <!-- MODULE EXAMINATION -->
+
+            <div class="module-exam-list">
+
+                {% for quiz in module.quizzes.all %}
+
+                    {% if quiz.exam_type == "module" and quiz.is_published %}
+
+                    <a class="assessment-link-card"
+                       href="{% url 'curriculum:quiz_detail' quiz.id %}">
+
+                        <span>
+                            <b>Module examination</b>
+                            <small>
+                                {{ quiz.title }}
+                                · 10 challenging MCQs
+                                · One attempt only
+                            </small>
+                        </span>
+
+                        <strong>Open test →</strong>
+
+                    </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </article>
+
+        {% empty %}
+
+        <div class="panel no-results">
+
+            <h3>Modules are being prepared</h3>
+
+            <p>
+                Administrators can add modules and publish
+                them from Django Admin.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="curriculum-aside panel">
+
+        <div class="eyebrow">LEARNING TIPS</div>
+
+        <h3>Make steady progress</h3>
+
+        <ul>
+            <li>Study one topic at a time.</li>
+            <li>Complete the five-question lesson examination.</li>
+            <li>Write down key ideas in your daily notes.</li>
+            <li>Complete module examinations after each module.</li>
+            <li>Revisit mistakes using the revision test.</li>
+        </ul>
+
+        <div class="aside-note">
+            Your completed topics, examination scores,
+            and mistakes are saved to your DataForge account.
+        </div>
+
+    </aside>
+
+</section>
+
+{% endblock %}

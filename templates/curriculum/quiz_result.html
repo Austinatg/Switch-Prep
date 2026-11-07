@@ -1,0 +1,292 @@
+
+{% extends "base.html" %}
+
+{% block title %}Examination Result — DataForge{% endblock %}
+
+{% block breadcrumb %}
+<a href="{% url 'curriculum:specialization_list' %}">
+    Learning paths
+</a>
+/
+<a href="{% url 'curriculum:specialization_detail' attempt.specialization.slug %}">
+    {{ attempt.specialization.name }}
+</a>
+/
+Result
+{% endblock %}
+
+{% block content %}
+
+<div class="curriculum-back">
+    <a href="{% url 'curriculum:specialization_detail' attempt.specialization.slug %}">
+        ← Back to course
+    </a>
+</div>
+
+<section class="panel quiz-result-panel"
+         style="max-width:950px;margin:0 auto;padding:28px">
+
+    <div class="eyebrow">EXAMINATION RESULT</div>
+
+    <h1>{{ attempt.get_exam_type_display }}</h1>
+
+    <p class="muted">
+        Your examination submission has been saved.
+        This examination cannot be retaken.
+    </p>
+
+
+    <!-- SCORE -->
+
+    <div class="quiz-score-card">
+
+        <div>
+            <span class="score-label">YOUR SCORE</span>
+
+            <h2>
+                {{ attempt.score }}
+                /
+                {{ attempt.total_questions }}
+            </h2>
+        </div>
+
+        <div>
+            <span class="score-label">ACCURACY</span>
+
+            <h2>{{ attempt.percentage }}%</h2>
+        </div>
+
+    </div>
+
+
+    <div class="track-meta">
+        <span>{{ attempt.submitted_at }}</span>
+        <span>{{ result_rows|length }} questions reviewed</span>
+    </div>
+
+
+    <!-- ANSWER REVIEW -->
+
+    <h2 class="result-review-heading">
+        Answer review
+    </h2>
+
+    {% for row in result_rows %}
+
+    <article class="result-question">
+
+        <div class="result-question-heading">
+
+            <b>Question {{ forloop.counter }}</b>
+
+            {% if row.is_correct %}
+
+            <span class="result-correct">
+                ✓ Correct
+            </span>
+
+            {% else %}
+
+            <span class="result-incorrect">
+                ✕ Incorrect
+            </span>
+
+            {% endif %}
+
+        </div>
+
+        <p class="result-question-prompt">
+            {{ row.question.prompt }}
+        </p>
+
+
+        <div class="result-answer">
+
+            <span class="muted">Your answer</span>
+
+            <p>
+                {% if row.selected %}
+                    {{ row.selected.text }}
+                {% else %}
+                    Not answered
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <div class="result-answer">
+
+            <span class="muted">Correct answer</span>
+
+            <p class="correct-answer-text">
+                {% if row.correct_choice %}
+                    {{ row.correct_choice.text }}
+                {% else %}
+                    Correct answer unavailable.
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        {% if row.question.explanation %}
+
+        <div class="result-explanation">
+
+            <b>Explanation</b>
+
+            <p>{{ row.question.explanation }}</p>
+
+        </div>
+
+        {% endif %}
+
+    </article>
+
+    {% empty %}
+
+    <p class="muted">
+        No answer details are available.
+    </p>
+
+    {% endfor %}
+
+
+    <!-- MISTAKE REVISION -->
+
+    {% if attempt.exam_type == "mistakes" %}
+
+    <div class="mistake-result-actions">
+
+        <h2>Continue your revision</h2>
+
+        <p class="muted">
+            Questions answered correctly have been removed
+            from your unresolved mistake list.
+            Incorrect questions remain available for revision.
+        </p>
+
+        <a class="button"
+           href="{% url 'curriculum:mistake_quiz' attempt.specialization.slug %}">
+
+            Retake mistake revision →
+
+        </a>
+
+    </div>
+
+    {% else %}
+
+    <div class="mistake-result-actions">
+
+        <p class="muted">
+            Your incorrect answers have been added to
+            your personal mistake bank for future revision.
+        </p>
+
+        <a class="button button-ghost"
+           href="{% url 'curriculum:specialization_detail' attempt.specialization.slug %}">
+
+            Return to course →
+
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<style>
+
+.quiz-score-card {
+    display: flex;
+    gap: 50px;
+    flex-wrap: wrap;
+    padding: 25px;
+    margin: 25px 0;
+    border-radius: 14px;
+    background: var(--surface-secondary, rgba(120,120,120,.08));
+}
+
+.score-label {
+    font-size: .75rem;
+    letter-spacing: .08em;
+    color: var(--text-secondary, #888);
+}
+
+.quiz-score-card h2 {
+    font-size: 2.2rem;
+    margin: 8px 0 0;
+}
+
+.result-review-heading {
+    margin-top: 35px;
+}
+
+.result-question {
+    padding: 22px 0;
+    border-top: 1px solid var(--border, #ddd);
+}
+
+.result-question-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+}
+
+.result-question-prompt {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 18px 0;
+}
+
+.result-correct {
+    color: #16a36a;
+    font-weight: 700;
+}
+
+.result-incorrect {
+    color: #df5555;
+    font-weight: 700;
+}
+
+.result-answer {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    background: var(--surface-secondary, rgba(120,120,120,.06));
+}
+
+.result-answer p {
+    margin: 6px 0 0;
+}
+
+.correct-answer-text {
+    font-weight: 600;
+}
+
+.result-explanation {
+    padding: 14px;
+    margin-top: 12px;
+    border-left: 3px solid var(--track-accent, #69a7ff);
+    background: var(--surface-secondary, rgba(120,120,120,.06));
+}
+
+.result-explanation p {
+    margin-bottom: 0;
+    line-height: 1.6;
+}
+
+.mistake-result-actions {
+    border-top: 1px solid var(--border, #ddd);
+    padding-top: 25px;
+    margin-top: 25px;
+}
+
+</style>
+
+{% endblock %}
