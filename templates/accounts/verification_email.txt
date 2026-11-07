@@ -1,0 +1,9 @@
+Welcome to SwitchFromTredence!
+
+Use this verification code to finish creating your account:
+
+{{ code }}
+
+This code expires in {{ expiry_minutes }} minutes and can only be used once.
+Never share this code with anyone. SwitchFromTredence will never ask you to
+share it.

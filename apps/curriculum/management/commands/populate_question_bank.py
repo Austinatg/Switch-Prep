@@ -1,5 +1,5 @@
 
-"""Populate DataForge lesson, module and course MCQs.
+"""Populate SwitchFromTredence lesson, module and course MCQs.
 
 File:
 apps/curriculum/management/commands/populate_question_bank.py
@@ -341,7 +341,7 @@ def generate_higher(topics, patterns, count, difficulty, label):
 class Command(BaseCommand):
     help = (
         "Generate lesson, module and two course-level MCQ exams "
-        "for all three DataForge courses."
+        "for all three SwitchFromTredence courses."
     )
 
     def add_arguments(self, parser):

@@ -1,4 +1,4 @@
-# DataForge — Phase 4 + Phase 5
+# SwitchFromTredence — Phase 4 + Phase 5
 
 This combined release adds a richer lesson experience, section assessments and personal daily notes.
 

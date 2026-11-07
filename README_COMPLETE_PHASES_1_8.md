@@ -1,6 +1,6 @@
-# DataForge — Complete Combined Project (Phases 1–8)
+# SwitchFromTredence — Complete Combined Project (Phases 1–8)
 
-This archive combines the existing DataForge platform with the Phase 6–8 additions in one project tree:
+This archive combines the existing SwitchFromTredence platform with the Phase 6–8 additions in one project tree:
 
 - Accounts, registration, email verification and password reset
 - Learning specializations, modules, sections, topic reader, progress, bookmarks and section assessments

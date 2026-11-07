@@ -74,7 +74,7 @@ FOUNDATION = [
 
 
 class Command(BaseCommand):
-    help = "Create a starter DataForge curriculum. Safe to run repeatedly."
+    help = "Create a starter SwitchFromTredence curriculum. Safe to run repeatedly."
 
     def handle(self, *args, **options):
         created_specializations = 0

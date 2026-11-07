@@ -1,1 +1,33 @@
-{% extends "base.html" %}{% block title %}My profile — DataForge{% endblock %}{% block breadcrumb %}Settings{% endblock %}{% block content %}<div class="page-intro"><div class="eyebrow">YOUR ACCOUNT</div><h1>Profile settings</h1><p>Manage your personal details and preferences.</p></div><div class="auth-card profile-card"><p class="muted">{{ request.user.email }} · {% if request.user.email_verified %}Email verified{% else %}Email not verified{% endif %}</p><form method="post">{% csrf_token %}<div class="field"><label for="bio">About you</label><textarea id="bio" name="bio" maxlength="280" rows="3">{{ profile.bio }}</textarea></div><div class="field"><label for="timezone">Timezone</label><input id="timezone" name="timezone" value="{{ profile.timezone }}"></div><button class="button button-full" type="submit">Save profile</button></form></div>{% endblock %}
+{% extends "base.html" %}
+{% block title %}My profile — SwitchFromTredence{% endblock %}
+{% block breadcrumb %}Settings{% endblock %}
+{% block content %}
+<div class="page-intro">
+  <div class="eyebrow">YOUR ACCOUNT</div>
+  <h1>Profile settings</h1>
+  <p>Manage your personal details and preferences.</p>
+</div>
+<div class="auth-card profile-card">
+  <p class="muted">{{ request.user.email }} · {% if request.user.email_verified %}Email verified{% else %}Email not verified{% endif %}</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="field">
+      <label for="bio">About you</label>
+      <textarea id="bio" name="bio" maxlength="280" rows="3">{{ profile.bio }}</textarea>
+    </div>
+    <div class="field">
+      <label for="timezone">Timezone</label>
+      <input id="timezone" name="timezone" value="{{ profile.timezone }}">
+    </div>
+    <button class="button button-full" type="submit">Save profile</button>
+  </form>
+</div>
+<section class="profile-logout" aria-labelledby="profile-logout-title">
+  <h2 id="profile-logout-title">Sign out</h2>
+  <p>End your current session on this device.</p>
+  <form method="post" action="{% url 'accounts:logout' %}">
+    {% csrf_token %}
+    <button class="button button-ghost" type="submit">Log out</button>
+  </form>
+</section>
+{% endblock %}
