@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Chat with {{ other.get_full_name|default:other.email }} · Community{% endblock %}
+{% block breadcrumb %}Community <span>/</span> Chat{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/community.css' %}">
+<section class="page-intro community-chat-heading">
+  <div><div class="eyebrow">PRIVATE CHAT</div><h1>{{ other.get_full_name|default:other.email }}</h1><p>Chat about anything and share photos or files. Messages refresh automatically.</p></div>
+  <a class="button button-ghost" href="{% url 'community:home' %}">← Community</a>
+</section>
+{% include "messaging/chat_interface.html" %}
+{% endblock %}

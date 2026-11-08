@@ -13,6 +13,7 @@ _SAFE_FEATURES = {
     "interview_simulator.question_generation",
     "interview_simulator.answer_evaluation",
     "shared_notebook_compilation",
+    "community_notes_compilation",
 }
 
 

@@ -37,6 +37,7 @@
     <div class="workspace-label">COMMUNITY</div>
     <nav class="side-nav">
       <a class="nav-item {% if active_page == 'community' %}active{% endif %}" href="{% url 'community:home' %}"><span>♧</span>Connections &amp; battles</a>
+      <a class="nav-item {% if active_page == 'community_notes_calendar' %}active{% endif %}" href="{% url 'community:notes_calendar' %}"><span>▦</span>Notes Calendar</a>
       <a class="nav-item" href="{% url 'community:battle' %}"><span>⚔</span>Daily battle</a>
       <a class="nav-item" href="{% url 'collaboration:home' %}"><span>▤</span>Shared notebooks</a>
       <a class="nav-item {% if active_page == 'messages' %}active{% endif %}" href="{% url 'messaging:inbox' %}"><span>◌</span>Messages</a>

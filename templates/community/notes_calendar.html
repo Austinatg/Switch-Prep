@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Notes Calendar · Community{% endblock %}
+{% block breadcrumb %}Community <span>/</span> Notes Calendar{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/community.css' %}">
+<section class="page-intro">
+  <div class="eyebrow">LEARN TOGETHER</div>
+  <h1>Notes Calendar</h1>
+  <p>Your notes are visible to accepted connections in this calendar. Browse notes by day, then optionally compile your notes with a friend’s using Gemini.</p>
+</section>
+
+<section class="calendar-panel panel community-calendar-panel">
+  <div class="calendar-heading">
+    <a class="calendar-nav" href="{% url 'community:notes_calendar' %}?month={{ previous_month }}">←</a>
+    <h2>{{ month_label }}</h2>
+    <a class="calendar-nav" href="{% url 'community:notes_calendar' %}?month={{ next_month }}">→</a>
+  </div>
+  <div class="calendar-grid calendar-weekdays">
+    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+  </div>
+  <div class="calendar-grid">
+    {% for day in cells %}
+      {% if day %}
+        <a class="calendar-day{% if day in note_days %} has-notes{% endif %}{% if day == selected_day and month|date:'Y-m' == selected_date|slice:':7' %} selected-calendar-day{% endif %}"
+           href="{% url 'community:notes_calendar' %}?month={{ month|date:'Y-m' }}&date={{ month|date:'Y-m' }}-{{ day|stringformat:'02d' }}">
+          <b>{{ day }}</b>{% if day in note_days %}<small>Notes</small>{% endif %}
+        </a>
+      {% else %}
+        <span class="calendar-day blank"></span>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div class="calendar-legend"><span class="legend-dot"></span> Days with notes from you or an accepted connection</div>
+</section>
+
+<section class="panel community-day-notes">
+  <div class="panel-heading">
+    <div><div class="eyebrow">SELECTED DAY</div><h2>{{ selected_date }}</h2></div>
+    <a class="subtle-link" href="{% url 'notes:home' %}?date={{ selected_date }}">Add or edit my notes →</a>
+  </div>
+  <div class="community-notes-columns">
+    <section>
+      <h3>Your notes</h3>
+      {% for note in own_notes %}
+        <article class="community-note-card">
+          {% if note.title %}<h4>{{ note.title }}</h4>{% endif %}
+          {% for point in note.points.all %}
+            <p><span class="note-importance">{{ point.get_importance_display }}</span>{{ point.content }}</p>
+          {% endfor %}
+        </article>
+      {% empty %}
+        <p class="muted">You have no notes for this day yet.</p>
+      {% endfor %}
+    </section>
+    <section>
+      <h3>Friends’ notes for this day</h3>
+      {% for friend in friends_with_notes %}
+        <a class="community-friend-note-link{% if selected_friend and selected_friend.pk == friend.pk %} selected-friend-note-link{% endif %}"
+           href="{% url 'community:notes_calendar' %}?month={{ month|date:'Y-m' }}&date={{ selected_date }}&friend={{ friend.pk }}">
+          <span class="avatar">{{ friend.first_name|default:friend.email|slice:':1'|upper }}</span>
+          <span><b>{{ friend.get_full_name|default:friend.email }}</b><small>{{ friend.note_count }} daily note{{ friend.note_count|pluralize }}</small></span>
+          <span aria-hidden="true">→</span>
+        </a>
+      {% empty %}
+        <p class="muted">No accepted connections have notes for this day.</p>
+      {% endfor %}
+    </section>
+  </div>
+
+  {% if selected_friend %}
+    <section class="selected-friend-notes">
+      <div class="panel-heading">
+        <div><div class="eyebrow">NOTES FROM YOUR CONNECTION</div><h3>{{ selected_friend.get_full_name|default:selected_friend.email }}</h3></div>
+      </div>
+      {% for note in friend_notes %}
+        <article class="community-note-card">
+          {% if note.title %}<h4>{{ note.title }}</h4>{% endif %}
+          {% for point in note.points.all %}
+            <p><span class="note-importance">{{ point.get_importance_display }}</span>{{ point.content }}</p>
+          {% endfor %}
+        </article>
+      {% endfor %}
+
+      <form class="compile-notes-form" method="post" action="{% url 'community:notes_calendar' %}?month={{ month|date:'Y-m' }}&date={{ selected_date }}&friend={{ selected_friend.pk }}">
+        {% csrf_token %}
+        <input type="hidden" name="month" value="{{ month|date:'Y-m' }}">
+        <input type="hidden" name="date" value="{{ selected_date }}">
+        <input type="hidden" name="friend" value="{{ selected_friend.pk }}">
+        <label class="ai-consent">
+          <input type="checkbox" name="ai_consent" value="yes" required>
+          I agree to send my notes for this day and this connection’s notes for this day to Gemini to create the compilation.
+        </label>
+        <button class="button button-primary" type="submit">✧ Compile to AI</button>
+      </form>
+      <p class="muted ai-privacy-note">Gemini receives only the two note sets selected for this date. AI use is subject to your account’s daily limits.</p>
+      {% if compiled_notes %}
+        <section class="compiled-notes">
+          <div class="eyebrow">AI-GENERATED STUDY NOTES</div>
+          <div class="compiled-notes-content">{{ compiled_notes|linebreaks }}</div>
+        </section>
+      {% endif %}
+    </section>
+  {% endif %}
+</section>
+{% endblock %}
