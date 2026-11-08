@@ -1,4 +1,5 @@
 from datetime import timedelta
+import json
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -103,6 +104,7 @@ def lab_list(request):
         {
             "active_page": "labs",
             "labs": page.object_list,
+            "solved_lab_ids": passed_ids,
             "page_obj": page,
             "categories": Lab.Category.choices,
             "difficulties": Lab.Difficulty.choices,
@@ -160,7 +162,51 @@ def submit_lab(request, slug):
     if len(answer) > 50000:
         messages.error(request, "Submissions must be 50,000 characters or fewer.")
         return redirect("labs:detail", slug=slug)
-    result = evaluate_submission(lab, answer)
+
+    browser_report = request.POST.get("browser_report")
+    if browser_report and lab.execution_mode in {"python", "sql"}:
+        try:
+            report = json.loads(browser_report)
+        except (TypeError, ValueError):
+            return JsonResponse({"error": "The browser test report is invalid."}, status=400)
+        if not isinstance(report, dict):
+            return JsonResponse({"error": "The browser test report is invalid."}, status=400)
+        expected_total = (
+            max(1, len(lab.public_test_cases or []) + len(lab.hidden_test_cases or []))
+            if lab.execution_mode == "python"
+            else 1
+        )
+        total = report.get("total")
+        passed_count = report.get("passed_count")
+        if (
+            report.get("mode") != lab.execution_mode
+            or isinstance(total, bool)
+            or total != expected_total
+            or isinstance(passed_count, bool)
+            or not isinstance(passed_count, int)
+            or not 0 <= passed_count <= expected_total
+        ):
+            return JsonResponse({"error": "The browser test report does not match this lab."}, status=400)
+
+        passed = report.get("passed") is True and passed_count == expected_total
+        result = {
+            "status": LabAttempt.Status.PASSED if passed else LabAttempt.Status.SUBMITTED,
+            "score": 100 if passed else round(100 * passed_count / expected_total),
+            "feedback": (
+                "Congratulations! All browser test cases passed."
+                if passed
+                else f"{passed_count} of {expected_total} browser test cases passed. Keep trying."
+            ),
+            "details": {
+                "mode": lab.execution_mode,
+                "passed_count": passed_count,
+                "total": expected_total,
+                "verification": "browser_only",
+            },
+        }
+    else:
+        result = evaluate_submission(lab, answer)
+
     LabAttempt.objects.create(
         user=request.user,
         lab=lab,
@@ -171,6 +217,15 @@ def submit_lab(request, slug):
         evaluation_details=result["details"],
     )
     award_eligible_achievements(request.user)
+    if browser_report:
+        return JsonResponse(
+            {
+                "status": result["status"],
+                "score": result["score"],
+                "feedback": result["feedback"],
+                "browser_only": True,
+            }
+        )
     messages.success(request, f"Submission recorded. {result['feedback']}")
     return redirect("labs:detail", slug=slug)
 

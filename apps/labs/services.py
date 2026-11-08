@@ -37,8 +37,8 @@ def award_eligible_achievements(user):
             user=user,
             key="first_solve",
             defaults={
-                "title": "First verified solution",
-                "description": "Received a server-verified pass on a practical lab.",
+                "title": "First passed solution",
+                "description": "Passed a practical lab's configured evaluation.",
             },
         )
     if solved_count >= 10:

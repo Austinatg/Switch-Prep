@@ -5,7 +5,13 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils.text import slugify
 
 from apps.labs.models import CaseStudy, Lab
-from apps.labs.seed_data import CASE_STUDIES, PYTHON_QUESTIONS, PYSPARK_QUESTIONS, SQL_QUESTIONS
+from apps.labs.seed_data import (
+    CASE_STUDIES,
+    PYTHON_QUESTIONS,
+    PYSPARK_QUESTIONS,
+    SQL_QUESTIONS,
+)
+from apps.labs.python_test_bank import cases_for, program_for, starter_for
 
 
 SQL_TABLES = [
@@ -56,6 +62,16 @@ SQL_TABLES = [
     ("web_events", ["event_id INTEGER"], [[1], [2], [3]]),
     ("mobile_events", ["event_id INTEGER"], [[2], [3], [4]]),
 ]
+
+LEGACY_FILTER_STARTER = (
+    "rows = [{'customer_id': 'c1', 'amount': 10}, "
+    "{'customer_id': '', 'amount': 5}]\n# filter rows"
+)
+LEGACY_JSON_STARTER = (
+    "import json\n\n"
+    "data = json.loads(input())\n"
+    "# TODO: transform the input data for this question and print the result as JSON.\n"
+)
 
 
 def _dataset_json():
@@ -129,7 +145,7 @@ def _question_defaults(category, spec, index):
             "starter_content": starter, "expected_output": expected,
             "concepts": [subcategory, "Data Engineering", "Correctness"],
             "dataset_definition": dataset, "sample_input": sample_input,
-            "constraints": "Preserve the documented output shape. Handle missing or malformed source values explicitly when relevant.",
+            "constraints": "Read one JSON value from standard input with json.loads(input()), follow its documented fields, and print the transformed result as JSON. Handle missing or malformed source values explicitly when relevant.",
             "public_test_cases": tests, "hidden_test_cases": [],
             "reference_solution": solution,
             "time_complexity": "Usually O(n) in the number of input records; state the effect of sorting or lookup structures.",
@@ -243,10 +259,47 @@ class Command(BaseCommand):
                     "estimated_minutes": 20 if index < 12 else 30,
                     "is_published": True,
                 })
-                _question, was_created = Lab.objects.get_or_create(
+                if category == Lab.Category.PYTHON:
+                    program = program_for(title)
+                    starter = starter_for(title)
+                    test_cases = cases_for(title)
+                    defaults.update({
+                        "starter_content": starter,
+                        "reference_solution": program,
+                        "expected_output": test_cases[0]["expected_output"],
+                        "sample_input": {"source_example": test_cases[0]["stdin"]},
+                        "dataset_definition": {
+                            "format": "JSON via standard input",
+                            "source_example": test_cases[0]["stdin"],
+                        },
+                        "public_test_cases": test_cases[:1],
+                        "hidden_test_cases": test_cases[1:],
+                    })
+                question, was_created = Lab.objects.get_or_create(
                     slug=defaults["slug"], defaults=defaults
                 )
                 created += int(was_created)
+                if not was_created and category == Lab.Category.PYTHON and (
+                    question.starter_content == spec[3]
+                    or question.starter_content == LEGACY_FILTER_STARTER
+                    or (
+                        title == "Normalize CSV headers"
+                        and question.starter_content == LEGACY_JSON_STARTER
+                    )
+                    or question.starter_content == program_for(title)
+                ):
+                    fields_to_update = (
+                        "starter_content",
+                        "expected_output",
+                        "reference_solution",
+                        "sample_input",
+                        "dataset_definition",
+                        "public_test_cases",
+                        "hidden_test_cases",
+                    )
+                    for field in fields_to_update:
+                        setattr(question, field, defaults[field])
+                    question.save(update_fields=(*fields_to_update, "updated_at"))
 
         Lab.objects.filter(
             slug="select-a-deterministic-latest-record",

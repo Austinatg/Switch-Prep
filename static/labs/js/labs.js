@@ -4,6 +4,7 @@
 
   const workspace = document.querySelector(".coding-panel");
   const mode = workspace?.dataset.mode || "reading";
+  const pythonFunctionInput = workspace?.dataset.pythonFunctionInput || "";
   const statusEl = document.getElementById("execution-status");
   const outputEl = document.getElementById("execution-output");
   const saveStatus = document.getElementById("save-status");
@@ -29,6 +30,38 @@
   const showOutput = (text) => {
     outputEl.textContent = text || "(No output)";
   };
+  const clearTestResults = () => {
+    const results = document.getElementById("test-results");
+    if (!results) return;
+    results.replaceChildren();
+    results.hidden = true;
+  };
+  const showPassedTests = (names) => {
+    const results = document.getElementById("test-results");
+    if (!results) return;
+    results.replaceChildren();
+    const heading = document.createElement("h3");
+    heading.textContent = `All ${names.length} test case${names.length === 1 ? "" : "s"} passed`;
+    const list = document.createElement("ul");
+    names.forEach((name) => {
+      const item = document.createElement("li");
+      item.textContent = name;
+      list.appendChild(item);
+    });
+    results.append(heading, list);
+    results.hidden = false;
+  };
+  const readJson = (id, fallback = []) => {
+    try {
+      return JSON.parse(document.getElementById(id)?.textContent || JSON.stringify(fallback));
+    } catch {
+      return fallback;
+    }
+  };
+  const parsedPublicTests = readJson("lab-public-test-cases");
+  const parsedHiddenTests = readJson("lab-hidden-test-cases");
+  const publicTestCases = Array.isArray(parsedPublicTests) ? parsedPublicTests : [];
+  const hiddenTestCases = Array.isArray(parsedHiddenTests) ? parsedHiddenTests : [];
   const expectedOutput = () => {
     try {
       return JSON.parse(document.getElementById("lab-expected-output")?.textContent || '""');
@@ -42,6 +75,13 @@
       return Object.fromEntries(Object.keys(value).sort().map((key) => [key, stableJson(value[key])]));
     }
     return value;
+  };
+  const outputsMatch = (actual, expected) => {
+    try {
+      return JSON.stringify(stableJson(JSON.parse(actual))) === JSON.stringify(stableJson(JSON.parse(expected)));
+    } catch {
+      return actual.trim() === String(expected).trim();
+    }
   };
   const cookie = (name) => {
     const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
@@ -124,29 +164,36 @@
     return pyodide;
   }
 
+  async function executePython(code, inputText) {
+    const runtime = await loadPyodide();
+    if (code.includes("import pandas")) {
+      setStatus("Loading pandas…", "loading");
+      await runtime.loadPackage("pandas");
+    }
+    const stdout = [];
+    const stderr = [];
+    const inputBytes = Array.from(new TextEncoder().encode(`${inputText}\n`));
+    runtime.setStdout({ batched: (line) => stdout.push(line) });
+    runtime.setStderr({ batched: (line) => stderr.push(line) });
+    runtime.setStdin({ stdin: () => inputBytes.length ? inputBytes.shift() : null });
+    const functionRunner = pythonFunctionInput
+      ? `\nimport json as __lab_json\n__lab_data = __lab_json.loads(input())\nprint(__lab_json.dumps(solve(__lab_data[${JSON.stringify(pythonFunctionInput)}]), separators=(",", ":")))\n`
+      : "";
+    const isolatedScript = `exec(compile(${JSON.stringify(code + functionRunner)}, "<lab-submission>", "exec"), {"__name__": "__main__"})`;
+    const result = await runtime.runPythonAsync(isolatedScript);
+    const pieces = [...stdout];
+    if (stderr.length) pieces.push(stderr.join("\n"));
+    if (!pieces.length && result !== undefined && result !== null) {
+      pieces.push(String(result));
+    }
+    return pieces.join("\n").trim() || "(Code completed without printed output)";
+  }
+
   async function runPython() {
     try {
-      const runtime = await loadPyodide();
-      if (currentCode().includes("import pandas")) {
-        setStatus("Loading pandas…", "loading");
-        await runtime.loadPackage("pandas");
-      }
-      const stdout = [];
-      const stderr = [];
-      const inputText = document.getElementById("program-input")?.value || "";
-      const inputBytes = Array.from(`${inputText}\n`, (character) => character.charCodeAt(0));
-      runtime.setStdout({ batched: (line) => stdout.push(line) });
-      runtime.setStderr({ batched: (line) => stderr.push(line) });
-      runtime.setStdin({ stdin: () => inputBytes.length ? inputBytes.shift() : null });
       setStatus("Running in browser…", "loading");
-      const result = await runtime.runPythonAsync(currentCode());
-      const pieces = [...stdout];
-      if (stderr.length) pieces.push(stderr.join("\n"));
-      if (!pieces.length && result !== undefined && result !== null) {
-        pieces.push(String(result));
-      }
-      showOutput(pieces.join("\n") || "(Code completed without printed output)");
-      const actual = pieces.join("\n").trim();
+      const actual = await executePython(currentCode(), document.getElementById("program-input")?.value || "");
+      showOutput(actual);
       const expected = expectedOutput();
       if (expected && actual === String(expected).trim()) {
         setStatus("Matches public sample output · browser-only", "success");
@@ -156,6 +203,71 @@
     } catch (error) {
       showOutput(error?.message || String(error));
       setStatus("Execution error", "error");
+    }
+  }
+
+  async function submitBrowserReport(passedCount, total) {
+    const formElement = document.getElementById("lab-submit-form");
+    document.getElementById("submit-answer").value = currentCode().trim();
+    const form = new FormData(formElement);
+    form.append("browser_report", JSON.stringify({
+      mode,
+      passed_count: passedCount,
+      total,
+      passed: passedCount === total,
+    }));
+    const response = await fetch(formElement.action, {
+      method: "POST",
+      body: form,
+      credentials: "same-origin",
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Your result could not be saved.");
+    setStatus(result.feedback, result.status === "passed" ? "success" : "warning");
+    return result;
+  }
+
+  async function gradePython() {
+    const button = document.querySelector("#lab-submit-form button[type='submit']");
+    button.disabled = true;
+    try {
+      const tests = [
+        ...publicTestCases.map((test) => ({
+          ...test,
+          stdin: test.stdin ?? document.getElementById("program-input")?.value ?? "",
+        })),
+        ...hiddenTestCases.map((test) => ({ ...test, stdin: test.stdin ?? test.input ?? "" })),
+      ];
+      if (!tests.length) throw new Error("This Python question has no configured expected-output test cases.");
+      if (tests.some((test) => !test || typeof test.expected_output !== "string")) {
+        throw new Error("A configured Python test case is missing its expected output.");
+      }
+
+      let passedCount = 0;
+      for (let index = 0; index < tests.length; index += 1) {
+        const test = tests[index];
+        setStatus(`Running test ${index + 1} of ${tests.length} in your browser…`, "loading");
+        try {
+          const actual = await executePython(currentCode(), String(test.stdin));
+          const passed = outputsMatch(actual, test.expected_output);
+          if (passed) passedCount += 1;
+        } catch {
+          // A failed case is intentionally not identified in learner-facing output.
+        }
+      }
+      const result = await submitBrowserReport(passedCount, tests.length);
+      if (result.status === "passed") {
+        showOutput("Congratulations! Your solution passed every test case.");
+        showPassedTests(tests.map((test, index) => test.name || `Test case ${index + 1}`));
+      } else {
+        showOutput("Some test cases failed. The individual cases are hidden; review your solution and try again.");
+        clearTestResults();
+      }
+    } catch (error) {
+      showOutput(error?.message || String(error));
+      setStatus("Could not run or save tests.", "error");
+    } finally {
+      button.disabled = false;
     }
   }
 
@@ -218,6 +330,8 @@
 
   async function runSql() {
     try {
+      if (sqlDb) sqlDb.close();
+      sqlDb = null;
       const db = await loadSqlite();
       setStatus("Running SQLite query…", "loading");
       const results = db.exec(currentCode());
@@ -225,7 +339,7 @@
         showOutput("Statement completed. No result set was returned.");
         const matched = expectedOutput() === "Statement executed successfully.";
         setStatus(matched ? "Matches expected statement result · browser-only" : "Statement completed · no result set", matched ? "success" : "warning");
-        return;
+        return matched;
       }
       outputEl.replaceChildren();
       results.forEach((result) => {
@@ -244,9 +358,11 @@
         matches = false;
       }
       setStatus(matches ? "Matches expected SQLite sample · browser-only" : "Result differs from expected SQLite sample", matches ? "success" : "warning");
+      return matches;
     } catch (error) {
       showOutput(error?.message || String(error));
       setStatus("SQL error", "error");
+      return false;
     }
   }
 
@@ -559,7 +675,37 @@
     }
   });
 
-  document.getElementById("lab-submit-form")?.addEventListener("submit", (event) => {
+  document.getElementById("lab-submit-form")?.addEventListener("submit", async (event) => {
+    if (mode === "python" || mode === "sql") {
+      event.preventDefault();
+      if (!currentCode().trim()) {
+        setStatus("Add a solution before running tests.", "warning");
+        return;
+      }
+      const button = event.currentTarget.querySelector("button[type='submit']");
+      button.disabled = true;
+      try {
+        if (mode === "python") {
+          clearTestResults();
+          await gradePython();
+        } else {
+          clearTestResults();
+          const matched = await runSql();
+          const result = await submitBrowserReport(matched ? 1 : 0, 1);
+          if (result.status === "passed") {
+            showPassedTests(["Expected result matched"]);
+          } else {
+            clearTestResults();
+          }
+        }
+      } catch (error) {
+        showOutput(error?.message || String(error));
+        setStatus("Could not run or save tests.", "error");
+      } finally {
+        button.disabled = false;
+      }
+      return;
+    }
     const answer = document.getElementById("submit-answer");
     answer.value = currentCode().trim();
     if (!answer.value) {

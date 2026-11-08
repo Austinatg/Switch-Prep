@@ -34,9 +34,9 @@
     {% if lab.execution_mode == 'sql' %}<p class="dialect-note"><b>SQLite in browser:</b> this exercise runs against SQLite. Date functions, type coercion, window features, and syntax vary across PostgreSQL, SQL Server, MySQL and other engines. Do not treat this result as universal dialect behavior.</p>{% endif %}
   </article>
 
-  <section class="panel coding-panel" data-mode="{{ lab.execution_mode }}" data-category="{{ lab.category }}">
+  <section class="panel coding-panel" data-mode="{{ lab.execution_mode }}" data-category="{{ lab.category }}" data-python-function-input="{% if lab.slug == 'normalize-csv-headers' %}headers{% endif %}">
     <div class="panel-heading"><div><p class="eyebrow">CODING WORKSPACE</p><h2>{% if lab.execution_mode == 'simulator' %}PySpark learning simulator{% elif lab.execution_mode == 'sql' %}SQLite browser lab{% elif lab.execution_mode == 'python' %}Python browser lab{% else %}Learning exercise{% endif %}</h2></div><span class="execution-badge">{% if lab.execution_mode == 'simulator' %}SIMULATED{% elif lab.execution_mode == 'sql' %}SQLITE{% elif lab.execution_mode == 'python' %}PYODIDE{% else %}CONCEPT{% endif %}</span></div>
-    {% if lab.execution_mode == 'simulator' %}<p class="runtime-disclaimer"><b>Learning simulator only.</b> This browser-side subset is not Apache Spark and does not model a Spark cluster. Run the same exercise in local Spark to validate Spark behavior.</p>{% elif lab.execution_mode == 'python' %}<p class="runtime-disclaimer">Python runs in Pyodide/WebAssembly in your browser. The Django server never executes submitted code. Internet access may be required to load the runtime.</p>{% elif lab.execution_mode == 'sql' %}<p class="runtime-disclaimer">SQL runs locally in browser-side SQLite. No query is sent to the Django server for execution.</p>{% endif %}
+    {% if lab.execution_mode == 'simulator' %}<p class="runtime-disclaimer"><b>Learning simulator only.</b> This browser-side subset is not Apache Spark and does not model a Spark cluster. Run the same exercise in local Spark to validate Spark behavior.</p>{% elif lab.execution_mode == 'python' %}<p class="runtime-disclaimer">Python runs in Pyodide/WebAssembly in your browser. {% if lab.slug == 'normalize-csv-headers' %}Write your logic inside <code>solve(headers)</code>; the runner reads JSON input and calls your function automatically.{% else %}The starter reads one JSON value from <code>input()</code>; each test supplies its own input. Print your result as JSON.{% endif %} The Django server never executes submitted code. Internet access may be required to load the runtime.</p>{% elif lab.execution_mode == 'sql' %}<p class="runtime-disclaimer">SQL runs locally in browser-side SQLite. No query is sent to the Django server for execution.</p>{% endif %}
     <div class="editor-toolbar"><span>Starter code</span><div><button type="button" class="button button-secondary button-small" id="copy-code">Copy</button><button type="button" class="button button-secondary button-small" id="reset-code">Reset</button></div></div>
     <div id="monaco-editor" class="lab-monaco-host" aria-label="Code editor"></div>
     <textarea id="starter-template" hidden>{{ lab.starter_content }}</textarea>
@@ -51,17 +51,18 @@
       <p>Run a solution against this example and compare the program output with the expected result.</p>
     </details>
     {% endif %}
-    {% if lab.execution_mode == 'python' %}<label class="program-input-label" for="program-input">Program input <small>Lines are passed to input() in order.</small></label><textarea id="program-input" class="program-input" rows="3" placeholder="Optional standard input"></textarea>{% endif %}
+    {% if lab.execution_mode == 'python' %}<label class="program-input-label" for="program-input">Program input <small>Lines are passed to input() in order.</small></label><textarea id="program-input" class="program-input" rows="3" placeholder="Optional standard input">{% if lab.public_test_cases.0.stdin %}{{ lab.public_test_cases.0.stdin }}{% endif %}</textarea>{% endif %}
     <div class="workspace-actions">
       {% if lab.execution_mode == 'python' %}<button type="button" class="button button-primary" id="run-code">Run Python</button>{% elif lab.execution_mode == 'sql' %}<button type="button" class="button button-primary" id="run-code">Run SQL</button>{% elif lab.execution_mode == 'simulator' %}<button type="button" class="button button-primary" id="run-code">Simulate DataFrame</button>{% endif %}
       <button type="button" class="button button-secondary" id="save-draft" data-url="{% url 'labs:save_draft' lab.slug %}">Save draft</button>
       <span class="save-status" id="save-status" role="status">Drafts are private to your account.</span>
     </div>
     <section class="runtime-output" aria-live="polite"><div class="output-heading"><b>Output</b><span id="execution-status">Ready</span></div><div id="execution-output">Run your solution to see output here.</div></section>
+    <section class="test-results" id="test-results" aria-live="polite" hidden></section>
     {% if lab.execution_mode == 'sql' %}<div class="schema-explorer"><h3>Schema explorer</h3><div id="schema-explorer-content">Loading sample schema…</div></div>{% endif %}
     {% if lab.execution_mode == 'simulator' %}<p class="simulator-capability">Supported subset: schema inspection, select, filter, withColumn, groupBy/aggregations, joins, and common row transformations. Unsupported: actual Spark execution, RDDs, streaming, cluster behavior, persistence, physical plans, and arbitrary Python expressions.</p>{% endif %}
     {% if lab.execution_mode == 'python' or lab.execution_mode == 'sql' or lab.execution_mode == 'simulator' %}
-    <form class="lab-submit-form" method="post" action="{% url 'labs:submit' lab.slug %}" id="lab-submit-form">{% csrf_token %}<input type="hidden" name="answer" id="submit-answer"><button class="button button-primary" type="submit">Submit attempt</button><small>Submission is saved to your account. Browser execution results are not trusted as server-verified scores.</small></form>
+    <form class="lab-submit-form" method="post" action="{% url 'labs:submit' lab.slug %}" id="lab-submit-form">{% csrf_token %}<input type="hidden" name="answer" id="submit-answer">{% if lab.execution_mode == 'python' %}<button class="button button-primary" type="submit">Run tests &amp; submit</button><small>Runs the public and configured hidden cases in your browser. Browser grading can be altered by the learner and is not server-verified.</small>{% elif lab.execution_mode == 'sql' %}<button class="button button-primary" type="submit">Check expected result &amp; submit</button><small>Runs in browser-side SQLite and compares the query result with the expected rows. Browser grading is not server-verified.</small>{% else %}<button class="button button-primary" type="submit">Submit attempt</button><small>Submission is saved to your account for review.</small>{% endif %}</form>
     {% endif %}
   </section>
 </div>
@@ -81,5 +82,7 @@
 </section>
 {{ lab.dataset_definition|json_script:"lab-dataset" }}
 {{ lab.expected_output|json_script:"lab-expected-output" }}
+{{ lab.public_test_cases|json_script:"lab-public-test-cases" }}
+{{ lab.hidden_test_cases|json_script:"lab-hidden-test-cases" }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js" defer></script>
 {% endblock %}
