@@ -45,6 +45,77 @@ Visit `/admin/` and sign in as a staff user.
 - **Shared notebooks:** users create notebooks in the app; owners can invite existing accounts by email.
 - **Labs, projects, certifications and curriculum:** continue managing the content using their existing admin sections.
 
+## Data Engineering practical labs
+
+The Practical Labs dashboard provides separate Python, SQL, and PySpark tracks,
+progress summaries, recommendations, recent attempts, bookmarks, private drafts,
+achievements, and ten end-to-end case studies. Seed the starter question bank after
+applying migrations:
+
+```powershell
+python manage.py migrate
+python manage.py seed_labs
+```
+
+The command is idempotent and only creates missing starter records; it leaves
+existing admin-edited content untouched. It also runs during the included Render
+build. Staff can add and publish more questions or case studies in Django Admin
+without changing frontend code. User attempts, bookmarks,
+drafts, and earned achievements are associated with the authenticated custom
+user. A question is counted as solved only when the server-side evaluation or an
+authorized review marks its attempt passed; browser-submitted scores are never
+accepted. The current starter bank uses review-required submissions rather than
+claiming browser test results are server-verified. Hidden grading is not
+implemented because this deployment deliberately does not execute learner code
+on the Django server.
+
+### Execution capabilities and limitations
+
+- **Python:** Monaco Editor with a textarea fallback; Pyodide runs Python in the
+  learner's browser using WebAssembly. Some packages (including pandas) load on
+  demand. A browser connection to the public runtime CDN may be required.
+- **SQL:** SQL.js runs the exercise against a preloaded SQLite database entirely
+  in the browser. The schema explorer and result table are local to that page.
+  SQL dialects are not interchangeable: the labs explicitly identify SQLite
+  syntax, date functions, type behavior, and query results as SQLite-specific.
+- **PySpark:** the browser offers a clearly marked learning simulator for a
+  limited subset of DataFrame operations. It is **not Apache Spark**, does not
+  execute arbitrary Python, and cannot model executors, shuffles, streaming,
+  cluster performance, or Spark SQL semantics. Unsupported operations are
+  reported rather than represented as Spark results.
+- **Real PySpark:** no external runtime is configured and no paid service is
+  added. The labs app defines a future execution-adapter interface but does not
+  submit code anywhere. To run an exercise locally, install a supported Java 17
+  runtime and a compatible PySpark release in a separate environment, then run:
+
+  ```powershell
+  py -3.12 -m venv .venv-spark
+  .venv-spark\Scripts\Activate.ps1
+  python -m pip install pyspark
+  python
+  ```
+
+  ```python
+  from pyspark.sql import SparkSession
+
+  spark = SparkSession.builder.master("local[*]").appName("DataEngineeringLab").getOrCreate()
+  rows = [("o-1", "c-1", 42.5), ("o-2", "c-1", 12.0)]
+  orders = spark.createDataFrame(rows, "order_id STRING, customer_id STRING, amount DOUBLE")
+  orders.groupBy("customer_id").sum("amount").show()
+  spark.stop()
+  ```
+
+  Paste the exercise's actual PySpark reference solution into that local
+  environment and adapt the sample rows to its documented schema. Browser
+  simulation results must not be interpreted as Spark execution.
+
+Monaco, Pyodide, and SQL.js are loaded from public CDNs; a restrictive browser
+network policy can leave the plain-text editor available while disabling a
+runtime. AI assistance is optional and uses the existing server-side Gemini
+configuration; credentials are not sent to the browser. PythonAnywhere free
+hosting remains compatible because it does not run Spark or arbitrary submitted
+code on the web server.
+
 ## Gemini AI learning tools
 
 The AI Tutor, lesson assistant, Code Assistant, personalized learning planner,

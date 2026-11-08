@@ -1,5 +1,85 @@
-{% extends "base.html" %}{% block title %}{{ lab.title }} · DataForge{% endblock %}{% block breadcrumb %}Practical labs / {{ lab.title }}{% endblock %}{% block content %}
-<a class="back-link" href="{% url 'labs:list' %}">← All labs</a><section class="page-heading"><div><p class="eyebrow">{{ lab.get_category_display }} · {{ lab.get_difficulty_display }}</p><h1>{{ lab.title }}</h1><p>{{ lab.summary }}</p></div><span class="tag">{{ lab.estimated_minutes }} min</span></section>
-<div class="two-column"><article class="panel"><h2>Challenge brief</h2><div class="rich-text">{{ lab.instructions|linebreaks }}</div>{% if lab.hints %}<details class="hint-box"><summary>Show hints</summary>{{ lab.hints|linebreaksbr }}</details>{% endif %}{% if lab.starter_content %}<h3>Starter code / query</h3><pre class="code-block"><code>{{ lab.starter_content }}</code></pre>{% endif %}</article><aside class="panel"><h2>Submit your solution</h2><p class="muted">Paste your SQL, code, output or implementation notes. Submitted code is not executed on the server.</p><form method="post" action="{% url 'labs:submit' lab.slug %}">{% csrf_token %}<textarea name="answer" rows="12" required placeholder="Write or paste your solution here…"></textarea><button class="button button-primary" type="submit">Submit solution</button></form></aside></div>
-<section class="section-block"><h2>Your recent submissions</h2>{% for attempt in attempts %}<div class="list-row"><div><b>{{ attempt.submitted_at|date:"M j, Y H:i" }}</b><p>{{ attempt.feedback }}</p></div><span class="tag">{{ attempt.get_status_display }} · {{ attempt.score }}%</span></div>{% empty %}<p class="muted">No submissions yet.</p>{% endfor %}</section>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ lab.title }} · Data Engineering Labs{% endblock %}
+{% block breadcrumb %}<a href="{% url 'labs:list' %}">Practical labs</a> <span>/</span> {{ lab.title }}{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'labs/css/labs.css' %}">
+<script src="{% static 'labs/js/labs.js' %}" defer></script>
+<a class="back-link" href="{% url 'labs:list' %}">← All labs</a>
+<section class="page-heading labs-detail-heading">
+  <div><p class="eyebrow">{{ lab.get_category_display }} · {{ lab.subcategory }} · {{ lab.get_difficulty_display }}</p><h1>{{ lab.title }}</h1><p>{{ lab.summary }}</p></div>
+  <div class="detail-actions"><span class="tag">{{ lab.estimated_minutes }} min</span><button class="button button-secondary" type="button" id="bookmark-button" data-url="{% url 'labs:bookmark' lab.slug %}" aria-pressed="{{ is_bookmarked|yesno:'true,false' }}">{% if is_bookmarked %}★ Bookmarked{% else %}☆ Bookmark{% endif %}</button></div>
+</section>
+
+<div class="labs-detail-layout">
+  <article class="panel lab-brief">
+    <h2>Challenge brief</h2>
+    <div class="rich-text">{{ lab.instructions|linebreaks }}</div>
+    {% if lab.concepts %}<div class="concept-list">{% for concept in lab.concepts %}<span class="tag">{{ concept }}</span>{% endfor %}</div>{% endif %}
+    {% if lab.constraints %}<h3>Constraints &amp; assumptions</h3><div class="rich-text">{{ lab.constraints|linebreaks }}</div>{% endif %}
+    {% if lab.dataset_definition %}
+    <details class="lab-accordion" open><summary>Dataset / schema</summary>
+      {% if lab.category == 'sql' %}<p class="muted">{{ lab.dataset_definition.dialect }}</p>{% endif %}
+      {% if lab.dataset_definition.tables %}{% for table in lab.dataset_definition.tables %}<details class="schema-table"><summary>{{ table.name }} <small>{{ table.rows|length }} sample rows</small></summary><code>{{ table.columns|join:", " }}</code><pre>{{ table.rows|first }}</pre></details>{% endfor %}
+      {% else %}<pre class="code-block">{{ lab.dataset_definition|pprint }}</pre>{% endif %}
+    </details>
+    {% endif %}
+    {% if lab.hints %}<details class="lab-accordion"><summary>Hints</summary><div class="rich-text">{{ lab.hints|linebreaks }}</div></details>{% endif %}
+    {% if lab.public_test_cases %}<details class="lab-accordion"><summary>Public test cases ({{ lab.public_test_cases|length }})</summary>{% for test in lab.public_test_cases %}<div class="public-test-case"><b>{{ test.name|default:"Example" }}</b>{% if test.input %}<pre>{{ test.input|pprint }}</pre>{% endif %}{% if test.expected_output %}<pre>{{ test.expected_output|pprint }}</pre>{% elif test.expected_rows %}<pre>{{ test.expected_rows|pprint }}</pre>{% endif %}</div>{% endfor %}</details>{% endif %}
+    {% if lab.brute_force_explanation %}<details class="lab-accordion"><summary>Approach &amp; complexity</summary><p>{{ lab.brute_force_explanation }}</p><p><b>Time:</b> {{ lab.time_complexity|default:"Not applicable" }}</p><p><b>Space:</b> {{ lab.space_complexity|default:"Not applicable" }}</p></details>{% endif %}
+    {% if lab.reference_solution %}<details class="lab-accordion solution-accordion"><summary>Reference solution</summary><p class="muted">Try the exercise first. Solutions are provided for learning and review.</p><pre class="code-block"><code>{{ lab.reference_solution }}</code></pre></details>{% endif %}
+    {% if lab.expected_output %}<details class="lab-accordion"><summary>Expected output</summary><pre class="code-block">{{ lab.expected_output }}</pre></details>{% endif %}
+    {% if lab.follow_up_questions %}<details class="lab-accordion"><summary>Interview follow-ups</summary><ul>{% for question in lab.follow_up_questions %}<li>{{ question }}</li>{% endfor %}</ul></details>{% endif %}
+    {% if related_labs %}<div class="related-labs"><h3>Related questions</h3>{% for related in related_labs %}<a href="{% url 'labs:detail' related.slug %}">{{ related.title }} →</a>{% endfor %}</div>{% endif %}
+    {% if lab.execution_mode == 'sql' %}<p class="dialect-note"><b>SQLite in browser:</b> this exercise runs against SQLite. Date functions, type coercion, window features, and syntax vary across PostgreSQL, SQL Server, MySQL and other engines. Do not treat this result as universal dialect behavior.</p>{% endif %}
+  </article>
+
+  <section class="panel coding-panel" data-mode="{{ lab.execution_mode }}" data-category="{{ lab.category }}">
+    <div class="panel-heading"><div><p class="eyebrow">CODING WORKSPACE</p><h2>{% if lab.execution_mode == 'simulator' %}PySpark learning simulator{% elif lab.execution_mode == 'sql' %}SQLite browser lab{% elif lab.execution_mode == 'python' %}Python browser lab{% else %}Learning exercise{% endif %}</h2></div><span class="execution-badge">{% if lab.execution_mode == 'simulator' %}SIMULATED{% elif lab.execution_mode == 'sql' %}SQLITE{% elif lab.execution_mode == 'python' %}PYODIDE{% else %}CONCEPT{% endif %}</span></div>
+    {% if lab.execution_mode == 'simulator' %}<p class="runtime-disclaimer"><b>Learning simulator only.</b> This browser-side subset is not Apache Spark and does not model a Spark cluster. Run the same exercise in local Spark to validate Spark behavior.</p>{% elif lab.execution_mode == 'python' %}<p class="runtime-disclaimer">Python runs in Pyodide/WebAssembly in your browser. The Django server never executes submitted code. Internet access may be required to load the runtime.</p>{% elif lab.execution_mode == 'sql' %}<p class="runtime-disclaimer">SQL runs locally in browser-side SQLite. No query is sent to the Django server for execution.</p>{% endif %}
+    <div class="editor-toolbar"><span>Starter code</span><div><button type="button" class="button button-secondary button-small" id="copy-code">Copy</button><button type="button" class="button button-secondary button-small" id="reset-code">Reset</button></div></div>
+    <div id="monaco-editor" class="lab-monaco-host" aria-label="Code editor"></div>
+    <textarea id="starter-template" hidden>{{ lab.starter_content }}</textarea>
+    <textarea id="code-editor" class="code-editor" spellcheck="false" aria-label="Code editor">{{ draft.content|default:lab.starter_content }}</textarea>
+    {% if lab.category == 'python' and lab.sample_input.source_example %}
+    <details class="python-example" open>
+      <summary>Example input and expected Python output</summary>
+      <div class="python-example-grid">
+        <div><h3>Example input / data</h3><pre>{{ lab.sample_input.source_example }}</pre></div>
+        <div><h3>Expected output</h3><pre>{{ lab.expected_output }}</pre></div>
+      </div>
+      <p>Run a solution against this example and compare the program output with the expected result.</p>
+    </details>
+    {% endif %}
+    {% if lab.execution_mode == 'python' %}<label class="program-input-label" for="program-input">Program input <small>Lines are passed to input() in order.</small></label><textarea id="program-input" class="program-input" rows="3" placeholder="Optional standard input"></textarea>{% endif %}
+    <div class="workspace-actions">
+      {% if lab.execution_mode == 'python' %}<button type="button" class="button button-primary" id="run-code">Run Python</button>{% elif lab.execution_mode == 'sql' %}<button type="button" class="button button-primary" id="run-code">Run SQL</button>{% elif lab.execution_mode == 'simulator' %}<button type="button" class="button button-primary" id="run-code">Simulate DataFrame</button>{% endif %}
+      <button type="button" class="button button-secondary" id="save-draft" data-url="{% url 'labs:save_draft' lab.slug %}">Save draft</button>
+      <span class="save-status" id="save-status" role="status">Drafts are private to your account.</span>
+    </div>
+    <section class="runtime-output" aria-live="polite"><div class="output-heading"><b>Output</b><span id="execution-status">Ready</span></div><div id="execution-output">Run your solution to see output here.</div></section>
+    {% if lab.execution_mode == 'sql' %}<div class="schema-explorer"><h3>Schema explorer</h3><div id="schema-explorer-content">Loading sample schema…</div></div>{% endif %}
+    {% if lab.execution_mode == 'simulator' %}<p class="simulator-capability">Supported subset: schema inspection, select, filter, withColumn, groupBy/aggregations, joins, and common row transformations. Unsupported: actual Spark execution, RDDs, streaming, cluster behavior, persistence, physical plans, and arbitrary Python expressions.</p>{% endif %}
+    {% if lab.execution_mode == 'python' or lab.execution_mode == 'sql' or lab.execution_mode == 'simulator' %}
+    <form class="lab-submit-form" method="post" action="{% url 'labs:submit' lab.slug %}" id="lab-submit-form">{% csrf_token %}<input type="hidden" name="answer" id="submit-answer"><button class="button button-primary" type="submit">Submit attempt</button><small>Submission is saved to your account. Browser execution results are not trusted as server-verified scores.</small></form>
+    {% endif %}
+  </section>
+</div>
+
+<section class="panel ai-assistant" data-url="{% url 'labs:ai_assist' lab.slug %}">
+  <div class="panel-heading"><div><p class="eyebrow">OPTIONAL · GEMINI</p><h2>Data Engineer interview assistant</h2></div></div>
+  <p class="muted">AI assistance is optional. Your local coding environments work without it. Do not include secrets or sensitive data in a prompt.</p>
+  <div class="ai-actions"><button type="button" data-ai-action="explain">Explain this question</button><button type="button" data-ai-action="hint">Give a hint</button><button type="button" data-ai-action="optimize">Optimize my solution</button><button type="button" data-ai-action="followups">Generate follow-ups</button><button type="button" data-ai-action="interview">Interview question</button>{% if lab.category == 'python' %}<button type="button" data-ai-action="review_python">Review my Python code</button>{% elif lab.category == 'sql' %}<button type="button" data-ai-action="review_sql">Review my SQL query</button>{% elif lab.category == 'pyspark' %}<button type="button" data-ai-action="explain_pyspark">Explain PySpark transformations</button>{% endif %}</div>
+  <label for="ai-question">Ask a follow-up (optional)</label><textarea id="ai-question" rows="2" placeholder="Ask about an approach or edge case…"></textarea>
+  <div class="ai-response" id="ai-response" aria-live="polite">Choose an action to ask the optional assistant.</div>
+</section>
+
+<section class="section-block">
+  <h2>Your recent submissions</h2>
+  {% for attempt in attempts %}<div class="list-row"><div><b>{{ attempt.submitted_at|date:"M j, Y H:i" }}</b><p>{{ attempt.feedback }}</p></div><span class="tag">{{ attempt.get_status_display }} · {{ attempt.score }}%</span></div>
+  {% empty %}<p class="muted">No submissions yet.</p>{% endfor %}
+</section>
+{{ lab.dataset_definition|json_script:"lab-dataset" }}
+{{ lab.expected_output|json_script:"lab-expected-output" }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js" defer></script>
 {% endblock %}

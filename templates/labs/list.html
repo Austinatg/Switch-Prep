@@ -1,5 +1,101 @@
-{% extends "base.html" %}{% block title %}Practical labs · DataForge{% endblock %}{% block breadcrumb %}Practical labs{% endblock %}{% block content %}
-<section class="page-heading"><div><p class="eyebrow">PHASE 6 · PRACTISE BY DOING</p><h1>Practical labs</h1><p>Build confidence with SQL, Python, PySpark, ETL and cloud engineering challenges.</p></div><div class="stat-card"><b>{{ my_attempts }}</b><span>submissions made</span></div></section>
-<form class="filter-row" method="get"><label>Category <select name="category"><option value="">All labs</option>{% for value,label in categories %}<option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label><button class="button button-secondary" type="submit">Filter</button></form>
-<div class="card-grid">{% for lab in labs %}<a class="content-card" href="{% url 'labs:detail' lab.slug %}"><div class="card-topline"><span class="tag">{{ lab.get_category_display }}</span><span class="muted">{{ lab.get_difficulty_display }}</span></div><h3>{{ lab.title }}</h3><p>{{ lab.summary }}</p><div class="card-meta">{{ lab.estimated_minutes }} min · {{ lab.get_evaluation_type_display }}</div><span class="text-link">Open lab →</span></a>{% empty %}<div class="empty-state"><h3>No labs published yet</h3><p>Add SQL, Python, PySpark or ETL labs in Django Admin.</p></div>{% endfor %}</div>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Data Engineering Labs · SwitchFromTredence{% endblock %}
+{% block breadcrumb %}Practical labs{% endblock %}
+{% block content %}
+<section class="page-heading labs-heading">
+  <div>
+    <p class="eyebrow">DATA ENGINEERING · PRACTICE BY DOING</p>
+    <h1>Practical Labs</h1>
+    <p>Prepare for real data engineering interviews with focused exercises, coding environments and guided projects.</p>
+  </div>
+  <a class="button button-primary" href="#question-bank">Browse questions ↓</a>
+</section>
+
+<section class="labs-stats" aria-label="Your practice progress">
+  <article class="lab-stat"><span>Total questions</span><strong>{{ total_questions }}</strong></article>
+  <article class="lab-stat"><span>Solved</span><strong>{{ solved_count }}</strong></article>
+  <article class="lab-stat"><span>Attempted</span><strong>{{ attempted_count }}</strong></article>
+  <article class="lab-stat"><span>Accuracy</span><strong>{{ accuracy }}%</strong></article>
+  <article class="lab-stat"><span>Coding streak</span><strong>{{ streak }} <small>days</small></strong></article>
+</section>
+
+<section class="labs-section">
+  <div class="labs-section-title"><div><p class="eyebrow">CHOOSE YOUR TRACK</p><h2>Three focused learning paths</h2></div></div>
+  <div class="track-grid">
+    {% for value,label,description in tracks %}
+    <a class="track-card track-{{ value }}" href="?category={{ value }}#question-bank">
+      <span class="track-icon">{% if value == 'python' %}Py{% elif value == 'sql' %}SQL{% else %}火{% endif %}</span>
+      <h3>{{ label }}</h3><p>{{ description }}</p>
+      {% for progress in category_progress %}{% if progress.value == value %}
+      <div class="track-progress"><span>{{ progress.solved }} of {{ progress.total }} solved</span><span>{{ progress.total|default:0 }} questions</span></div>
+      {% endif %}{% endfor %}
+      <span class="track-link">Start practicing →</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="labs-dashboard-grid">
+  <article class="panel">
+    <div class="panel-heading"><div><p class="eyebrow">YOUR PROGRESS</p><h2>Difficulty breakdown</h2></div></div>
+    <div class="difficulty-list">
+      {% for item in difficulty_progress %}
+      <div class="difficulty-row"><div><b>{{ item.label }}</b><span>{{ item.solved }} / {{ item.total }} solved</span></div><progress max="{{ item.total|default:1 }}" value="{{ item.solved }}"></progress></div>
+      {% endfor %}
+    </div>
+  </article>
+  <article class="panel">
+    <div class="panel-heading"><div><p class="eyebrow">KEEP GOING</p><h2>Recommended practice</h2></div></div>
+    <div class="compact-lab-list">
+      {% for lab in recommendations %}<a href="{% url 'labs:detail' lab.slug %}"><span><b>{{ lab.title }}</b><small>{{ lab.get_category_display }} · {{ lab.get_difficulty_display }}</small></span><i>→</i></a>
+      {% empty %}<p class="muted">No recommendations yet. Publish practice questions to get started.</p>{% endfor %}
+    </div>
+  </article>
+  <article class="panel">
+    <div class="panel-heading"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>Recently attempted</h2></div></div>
+    <div class="compact-lab-list">
+      {% for attempt in recent_attempts %}<a href="{% url 'labs:detail' attempt.lab.slug %}"><span><b>{{ attempt.lab.title }}</b><small>{{ attempt.submitted_at|date:"M j, H:i" }} · {{ attempt.get_status_display }}</small></span><i>{{ attempt.score }}%</i></a>
+      {% empty %}<p class="muted">Your attempts will appear here. Pick a track to begin.</p>{% endfor %}
+    </div>
+  </article>
+  <article class="panel">
+    <div class="panel-heading"><div><p class="eyebrow">SAVED FOR LATER</p><h2>Bookmarked questions</h2></div></div>
+    <div class="compact-lab-list">
+      {% for lab in bookmarked_labs %}<a href="{% url 'labs:detail' lab.slug %}"><span><b>{{ lab.title }}</b><small>{{ lab.get_category_display }} · {{ lab.get_difficulty_display }}</small></span><i>★</i></a>
+      {% empty %}<p class="muted">Bookmark a question to build a focused review list.</p>{% endfor %}
+    </div>
+  </article>
+</section>
+
+<section class="panel achievements-panel">
+  <div class="panel-heading"><div><p class="eyebrow">MILESTONES</p><h2>Achievements</h2></div></div>
+  <div class="achievement-list">
+    {% for achievement in achievements %}<div><span>✦</span><b>{{ achievement.title }}</b><small>{{ achievement.description }}</small></div>
+    {% empty %}<p class="muted">Your first attempt, verified solves and practice streaks unlock achievements.</p>{% endfor %}
+  </div>
+</section>
+
+<section class="labs-section" id="case-studies">
+  <div class="labs-section-title"><div><p class="eyebrow">END-TO-END PRACTICE</p><h2>Data Engineering case studies</h2><p>Work through realistic pipeline requirements, checkpoints and expected outcomes.</p></div><a class="subtle-link" href="{% url 'labs:case_studies' %}">All case studies →</a></div>
+  <div class="card-grid">
+    {% for study in case_studies|slice:":3" %}<a class="content-card" href="{% url 'labs:case_study_detail' study.slug %}"><div class="card-topline"><span class="tag">{{ study.get_track_display }}</span><span class="muted">{{ study.get_difficulty_display }}</span></div><h3>{{ study.title }}</h3><p>{{ study.summary }}</p><span class="text-link">View project →</span></a>
+    {% empty %}<p class="empty-state">Case studies are being prepared.</p>{% endfor %}
+  </div>
+</section>
+
+<section class="labs-section" id="question-bank">
+  <div class="labs-section-title"><div><p class="eyebrow">QUESTION BANK</p><h2>Practice questions</h2><p>Explore practical interview prompts across Python, SQL, PySpark and pipeline engineering.</p></div></div>
+  <form class="filter-row labs-filters" method="get">
+    <label>Search <input name="q" value="{{ search_query }}" placeholder="Question or concept"></label>
+    <label>Track <select name="category"><option value="">All tracks</option>{% for value,label in categories %}<option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <label>Difficulty <select name="difficulty"><option value="">All levels</option>{% for value,label in difficulties %}<option value="{{ value }}" {% if selected_difficulty == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <button class="button button-secondary" type="submit">Apply filters</button>
+  </form>
+  <div class="card-grid">
+    {% for lab in labs %}<a class="content-card" href="{% url 'labs:detail' lab.slug %}"><div class="card-topline"><span class="tag">{{ lab.get_category_display }}</span><span class="muted">{{ lab.get_difficulty_display }}</span></div><h3>{{ lab.title }}</h3><p>{{ lab.summary }}</p><div class="card-meta"><span>{{ lab.subcategory }}</span><span>{{ lab.estimated_minutes }} min</span></div><span class="text-link">Open question →</span></a>
+    {% empty %}<div class="empty-state"><h3>No matching questions</h3><p>Change or clear your filters to explore the question bank.</p></div>{% endfor %}
+  </div>
+  {% if page_obj.has_other_pages %}<nav class="lab-pagination" aria-label="Question pages">{% if page_obj.has_previous %}<a href="?q={{ search_query|urlencode }}&category={{ selected_category }}&difficulty={{ selected_difficulty }}&page={{ page_obj.previous_page_number }}#question-bank">← Previous</a>{% endif %}<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a href="?q={{ search_query|urlencode }}&category={{ selected_category }}&difficulty={{ selected_difficulty }}&page={{ page_obj.next_page_number }}#question-bank">Next →</a>{% endif %}</nav>{% endif %}
+</section>
 {% endblock %}
