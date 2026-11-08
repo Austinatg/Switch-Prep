@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Data Engineering Case Studies · SwitchFromTredence{% endblock %}
+{% block breadcrumb %}Practical labs / Case studies{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'labs:list' %}">← Labs dashboard</a>
+<section class="page-heading"><div><p class="eyebrow">END-TO-END DATA ENGINEERING</p><h1>Case studies</h1><p>Build complete, observable pipelines from realistic requirements through production-ready checkpoints.</p></div></section>
+<div class="card-grid">{% for study in case_studies %}
+  <a class="content-card" href="{% url 'labs:case_study_detail' study.slug %}">
+    <div class="card-topline"><span class="tag">{{ study.get_track_display }}</span><span class="muted">{{ study.get_difficulty_display }}</span></div>
+    <h3>{{ study.title }}</h3><p>{{ study.summary }}</p>
+    <div class="card-meta"><span>{{ study.tasks|length }} tasks</span><span>{{ study.checkpoints|length }} checkpoints</span></div>
+    <span class="text-link">Open case study →</span>
+  </a>
+{% empty %}<div class="empty-state"><h3>No case studies published</h3><p>Publish a case study in Django Admin or run the labs seed command.</p></div>{% endfor %}</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ study.title }} · Data Engineering Case Study{% endblock %}
+{% block breadcrumb %}<a href="{% url 'labs:list' %}">Practical labs</a> <span>/</span> <a href="{% url 'labs:case_studies' %}">Case studies</a> <span>/</span> {{ study.title }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'labs:case_studies' %}">← All case studies</a>
+<section class="page-heading"><div><p class="eyebrow">{{ study.get_track_display }} · {{ study.get_difficulty_display }}</p><h1>{{ study.title }}</h1><p>{{ study.summary }}</p></div></section>
+<div class="two-column case-study-layout">
+  <article class="panel"><h2>Requirements</h2><div class="rich-text">{{ study.requirements|linebreaks }}</div>
+    {% if study.dataset_definition %}<h3>Sample dataset</h3><pre class="code-block">{{ study.dataset_definition|pprint }}</pre>{% endif %}
+    <h3>Tasks</h3><ol class="case-study-list">{% for task in study.tasks %}<li>{{ task }}</li>{% endfor %}</ol>
+  </article>
+  <aside class="panel"><h2>Checkpoints</h2><ol class="case-study-list">{% for checkpoint in study.checkpoints %}<li>{{ checkpoint }}</li>{% endfor %}</ol>
+    <h3>Expected outcomes</h3><div class="rich-text">{{ study.expected_outcomes|linebreaks }}</div>
+    {% if study.track == 'python' %}<p class="muted">Use local Python, pandas if needed, and a database of your choice. Submitted code is not executed by this site.</p>{% elif study.track == 'sql' %}<p class="dialect-note">SQL implementations are dialect-specific; document and test against your chosen database engine.</p>{% elif study.track == 'pyspark' %}<p class="runtime-disclaimer"><b>Run locally for real Spark.</b> This case study requires a local Apache Spark environment for actual execution. The browser simulator is not Spark.</p>{% endif %}
+  </aside>
+</div>
+{% endblock %}
