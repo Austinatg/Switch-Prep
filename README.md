@@ -62,12 +62,16 @@ existing admin-edited content untouched. It also runs during the included Render
 build. Staff can add and publish more questions or case studies in Django Admin
 without changing frontend code. User attempts, bookmarks,
 drafts, and earned achievements are associated with the authenticated custom
-user. A question is counted as solved only when the server-side evaluation or an
-authorized review marks its attempt passed; browser-submitted scores are never
-accepted. The current starter bank uses review-required submissions rather than
-claiming browser test results are server-verified. Hidden grading is not
-implemented because this deployment deliberately does not execute learner code
-on the Django server.
+user. Python test cases run in Pyodide and SQL result comparisons run in browser
+SQLite. A passing browser report is saved as a passed attempt for self-study
+progress, but it is explicitly browser-only and can be forged by a learner with
+developer tools. The Django server never executes submitted Python or SQL.
+Hidden Python cases are delivered to the browser to run, so they are not secret
+or tamper-proof; add cases in Django admin under each question's evaluation
+settings. All 36 seeded Python questions use one JSON value on standard input and
+include 20 distinct public/hidden cases (one public and 19 hidden). Running
+`python manage.py seed_labs` upgrades untouched older Python seed records to this
+input contract while preserving records whose starter code has been customized.
 
 ### Execution capabilities and limitations
 

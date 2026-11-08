@@ -1,8 +1,62 @@
 """Curated, idempotently seeded Data Engineering practice content."""
 
+import json
+
+
+FILTER_CASES = [
+    ("Public example", [{"customer_id": "c1", "amount": 10}, {"customer_id": "", "amount": 5}]),
+    ("Empty batch", []),
+    ("All records are complete", [{"customer_id": "c1", "amount": 1}, {"customer_id": "c2", "amount": 2}]),
+    ("All records are incomplete", [{"customer_id": "", "amount": 1}, {"customer_id": "c2", "amount": None}]),
+    ("Missing customer id", [{"amount": 5}]),
+    ("Null customer id", [{"customer_id": None, "amount": 5}]),
+    ("Whitespace customer id", [{"customer_id": "   ", "amount": 5}]),
+    ("Missing amount", [{"customer_id": "c1"}]),
+    ("Null amount", [{"customer_id": "c1", "amount": None}]),
+    ("Zero amount is valid", [{"customer_id": "c1", "amount": 0}]),
+    ("Negative amount is valid", [{"customer_id": "c1", "amount": -4.5}]),
+    ("Empty amount is invalid", [{"customer_id": "c1", "amount": ""}]),
+    ("Whitespace amount is invalid", [{"customer_id": "c1", "amount": " "}]),
+    ("Preserve original order", [{"customer_id": "c2", "amount": 2}, {"customer_id": "", "amount": 9}, {"customer_id": "c1", "amount": 1}]),
+    ("Keep duplicate customer rows", [{"customer_id": "c1", "amount": 1}, {"customer_id": "c1", "amount": 1}]),
+    ("Keep zero and positive amounts", [{"customer_id": "c1", "amount": 0}, {"customer_id": "c2", "amount": 2}]),
+    ("Reject both absent fields", [{"customer_id": "", "amount": None}]),
+    ("Whitespace around valid id", [{"customer_id": " c1 ", "amount": 3}]),
+    ("Numeric customer id", [{"customer_id": 7, "amount": 8}]),
+    ("Mixed valid and invalid rows", [{"customer_id": "c1", "amount": 10}, {"customer_id": None, "amount": 4}, {"customer_id": "c3", "amount": 0}]),
+]
+
+
+def _filtered_rows(rows):
+    return [
+        row for row in rows
+        if row.get("customer_id") is not None
+        and str(row["customer_id"]).strip()
+        and row.get("amount") is not None
+        and str(row["amount"]).strip()
+    ]
+
+
+FILTER_STARTER = (
+    "import json\n"
+    "rows = json.loads(input())\n"
+    "valid = [\n"
+    "    row for row in rows\n"
+    "    if row.get('customer_id') is not None\n"
+    "    and str(row['customer_id']).strip()\n"
+    "    and row.get('amount') is not None\n"
+    "    and str(row['amount']).strip()\n"
+    "]\n"
+    "print(json.dumps(valid, separators=(',', ':'), sort_keys=True))"
+)
+FILTER_REFERENCE = FILTER_STARTER
+FILTER_EXPECTED = json.dumps(
+    _filtered_rows(FILTER_CASES[0][1]), separators=(",", ":"), sort_keys=True
+)
+
 PYTHON_QUESTIONS = [
     ("Normalize CSV headers", "Core Python", "Convert source headers to lowercase snake_case.", "headers = ['Customer ID', 'Order-Date']\n# normalize headers", "import re\nheaders = ['Customer ID', 'Order-Date']\nnormalized = [re.sub(r'[^a-z0-9]+', '_', h.lower()).strip('_') for h in headers]\nprint(normalized)", "['customer_id', 'order_date']", ["customer_id", "order_date"]),
-    ("Filter incomplete records", "Lists", "Keep records that have a non-empty customer_id and amount.", "rows = [{'customer_id': 'c1', 'amount': 10}, {'customer_id': '', 'amount': 5}]\n# filter rows", "rows = [{'customer_id': 'c1', 'amount': 10}, {'customer_id': '', 'amount': 5}]\nvalid = [row for row in rows if row.get('customer_id') and row.get('amount') is not None]\nprint(valid)", "[{'customer_id': 'c1', 'amount': 10}]", [{"customer_id": "c1", "amount": 10}]),
+    ("Filter incomplete records", "Lists", "Read a JSON array of records from standard input and keep rows with a non-blank customer_id and amount. Preserve order and retain zero or negative amounts.", FILTER_STARTER, FILTER_REFERENCE, FILTER_EXPECTED, FILTER_CASES[0][1]),
     ("Aggregate revenue by customer", "Dictionaries", "Sum order amounts by customer without losing customers with zero-valued orders.", "orders = [{'customer': 'a', 'amount': 10}, {'customer': 'a', 'amount': 5}, {'customer': 'b', 'amount': 0}]\n# aggregate", "orders = [{'customer': 'a', 'amount': 10}, {'customer': 'a', 'amount': 5}, {'customer': 'b', 'amount': 0}]\ntotals = {}\nfor order in orders:\n    totals[order['customer']] = totals.get(order['customer'], 0) + order['amount']\nprint(totals)", "{'a': 15, 'b': 0}", {"a": 15, "b": 0}),
     ("Count distinct event types", "Sets", "Return the number of unique event types in an event batch.", "events = ['click', 'view', 'click']\n# count distinct", "events = ['click', 'view', 'click']\nprint(len(set(events)))", "2", 2),
     ("Unpack a source record", "Tuples", "Unpack a positional source row into named fields and format a normalized record.", "row = ('o-1', 'c-2', 17.5)\n# unpack", "row = ('o-1', 'c-2', 17.5)\norder_id, customer_id, amount = row\nprint({'order_id': order_id, 'customer_id': customer_id, 'amount': amount})", "{'order_id': 'o-1', 'customer_id': 'c-2', 'amount': 17.5}", {"order_id": "o-1", "customer_id": "c-2", "amount": 17.5}),
