@@ -1,5 +1,15 @@
+from pathlib import PurePath
+from uuid import uuid4
+
 from django.conf import settings
 from django.db import models
+
+
+def message_upload_path(instance, filename):
+    extension = PurePath(filename).suffix.lower()
+    return f"messaging/{instance.conversation_id}/{uuid4().hex}{extension}"
+
+
 class Conversation(models.Model):
     participants=models.ManyToManyField(settings.AUTH_USER_MODEL,related_name='conversations')
     created_at=models.DateTimeField(auto_now_add=True); updated_at=models.DateTimeField(auto_now=True)
@@ -7,7 +17,10 @@ class Conversation(models.Model):
 class Message(models.Model):
     conversation=models.ForeignKey(Conversation,on_delete=models.CASCADE,related_name='messages')
     sender=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='sent_messages')
-    body=models.TextField(max_length=5000); created_at=models.DateTimeField(auto_now_add=True)
+    body=models.TextField(max_length=5000,blank=True)
+    attachment=models.FileField(upload_to=message_upload_path,blank=True,default="")
+    attachment_name=models.CharField(max_length=255,blank=True,default="")
+    created_at=models.DateTimeField(auto_now_add=True)
     read_by=models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True,related_name='read_messages')
     class Meta: ordering=['created_at']
 

@@ -6,11 +6,11 @@ DataForge is a free-to-use Django learning platform for Data Engineering. This p
 
 - **1–2 · Foundation:** custom email-based accounts, email verification, password reset, profile and responsive workspace.
 - **3–4 · Learning engine:** specializations, modules, sections, topics, structured lesson reader, bookmarks, assessments and progress.
-- **5 · Notes:** daily notes, importance labels, editing, search and calendar archive.
+- **5 · Notes:** daily notes, importance labels, editing, search and calendar archive; the Community Notes Calendar also shows notes shared with accepted connections by date.
 - **6–8 · Practice:** practical labs, guided projects, capstones, certification tracks and mock exams.
-- **9 · DataForge Connect:** learner discovery, connection requests, daily five-question battles, submissions and connection-only peer reviews.
+- **9 · DataForge Connect:** learner discovery, connection requests, the shared Notes Calendar, daily five-question battles, submissions and connection-only peer reviews.
 - **10 · Collaborative learning:** shared notebooks, invited members, comments, AI-assisted study-guide compilation and an optional AI Data Engineering tutor.
-- **11 · Communication:** private messages between accepted connections, automatic refresh while chat is open, unread/read tracking and last-seen presence.
+- **11 · Communication:** private messages between accepted connections, automatic refresh while chat is open, unread/read tracking, last-seen presence, and private photo/document attachments up to 10 MB.
 - **12 · Release readiness:** security defaults, environment configuration, migration files, tests, deployment notes and operational health endpoint.
 
 ## Windows setup
@@ -116,18 +116,30 @@ input contract while preserving records whose starter code has been customized.
 Monaco, Pyodide, and SQL.js are loaded from public CDNs; a restrictive browser
 network policy can leave the plain-text editor available while disabling a
 runtime. AI assistance is optional and uses the existing server-side Gemini
-configuration; credentials are not sent to the browser. PythonAnywhere free
-hosting remains compatible because it does not run Spark or arbitrary submitted
-code on the web server.
+configuration; credentials are not sent to the browser. In the Community Notes
+Calendar, notes are visible to accepted connections. Compiling notes sends only
+the current user's and selected connection's notes for the chosen day to Gemini,
+and requires explicit confirmation. PythonAnywhere free hosting remains
+compatible because it does not run Spark or arbitrary submitted code on the web
+server.
 
 ## Gemini AI learning tools
 
 The AI Tutor, lesson assistant, Code Assistant, personalized learning planner,
-interview simulator and shared-notebook study-guide compilation use Google's
-`google-genai` SDK. The application does not use OpenAI, paid fallbacks, or
-automatic billing upgrades. AI tools remain unavailable until `GEMINI_API_KEY`
-is configured in the server environment; never put the key in templates,
-JavaScript, source control or logs.
+interview simulator, shared-notebook compilation and Community Notes Calendar
+compilation use Google's `google-genai` SDK. Calendar compilation requires the
+user to confirm before sending their notes and the selected accepted
+connection's notes for that date. The application does not use OpenAI, paid
+fallbacks, or automatic billing upgrades. AI tools remain unavailable until
+`GEMINI_API_KEY` is configured in the server environment; never put the key in
+templates, JavaScript, source control or logs.
+
+Private chat attachments are stored below `MEDIA_ROOT` and are delivered only
+through an authenticated conversation-member endpoint; do not map `/media/` to
+a public web directory. The upload allowlist includes common image formats,
+PDF, text/CSV and Office documents, with a 10 MB per-file limit. Apply the
+messaging migration and ensure the PythonAnywhere account has write permission
+to the configured media directory before enabling uploads.
 
 Configure these values in `.env` for local development or the host's environment
 settings:
